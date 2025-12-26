@@ -38,16 +38,26 @@
 
   # GTK theme (GNOME için)
   gtk = {
-    enable = true;
-    theme = {
-      name = "Adwaita-dark";
-      package = pkgs.gnome-themes-extra;
-    };
-    iconTheme = {
-      name = "Adwaita";
-      package = pkgs.adwaita-icon-theme;
-    };
+  enable = true;
+  theme = {
+    name = "Adwaita-dark";
+    package = pkgs.gnome-themes-extra;
   };
+  iconTheme = {
+    name = "Adwaita";
+    package = pkgs.adwaita-icon-theme;
+  };
+  
+  # Force overwrite - mevcut dosyaların üzerine yaz
+  gtk2.configLocation = "${config.home.homeDirectory}/.gtkrc-2.0";
+  gtk2.extraConfig = "";
+  gtk3.extraConfig = {
+    gtk-application-prefer-dark-theme = true;
+  };
+  gtk4.extraConfig = {
+    gtk-application-prefer-dark-theme = true;
+  };
+};
 
   # User-level packages (system'dekiler dışında)
   home.packages = with pkgs; [
