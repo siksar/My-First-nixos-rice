@@ -27,7 +27,241 @@
   # ========================================================================
   # ZSH + STARSHIP
   # ========================================================================
+  # ========================================================================
+  # ANYRUN - Modern Application Launcher
+  # ========================================================================
   
+  programs.anyrun = {
+    enable = true;
+    
+    config = {
+      # Position & Size
+      x = { fraction = 0.5; };
+      y = { fraction = 0.3; };
+      width = { fraction = 0.4; };
+      height = { absolute = 0; };  # Auto height
+      
+      # Hide settings
+      hideIcons = false;
+      ignoreExclusiveZones = false;
+      layer = "overlay";
+      hidePluginInfo = false;
+      closeOnClick = true;
+      showResultsImmediately = true;
+      maxEntries = 8;
+      
+      # Plugins (order matters!)
+      plugins = [
+        # Applications
+        "${pkgs.anyrun}/lib/libapplications.so"
+        # Symbols & Emoji
+        "${pkgs.anyrun}/lib/libsymbols.so"
+        # Shell commands
+        "${pkgs.anyrun}/lib/libshell.so"
+        # Calculator
+        # "${pkgs.anyrun}/lib/libcalc.so"  # Uncomment if you want calculator
+      ];
+    };
+    
+    # Princess Theme Styling
+    extraCss = ''
+      * {
+        all: unset;
+        font-family: "JetBrainsMono Nerd Font";
+        font-size: 14px;
+      }
+      
+      /* Main window - Princess colors */
+      #window {
+        background: rgba(46, 42, 61, 0.95);
+        border: 3px solid #e88388;
+        border-radius: 16px;
+        padding: 20px;
+      }
+      
+      /* Input box */
+      #entry {
+        background: rgba(58, 52, 71, 0.8);
+        color: #f4e8d8;
+        border: 2px solid #f5a97f;
+        border-radius: 12px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+      }
+      
+      #entry:focus {
+        border-color: #e88388;
+        box-shadow: 0 0 8px rgba(232, 131, 136, 0.4);
+      }
+      
+      /* Match list */
+      #match {
+        padding: 8px 12px;
+        margin: 4px 0;
+        border-radius: 8px;
+        transition: all 0.2s;
+      }
+      
+      #match:hover {
+        background: rgba(232, 131, 136, 0.2);
+      }
+      
+      #match:selected {
+        background: linear-gradient(135deg, rgba(232, 131, 136, 0.4), rgba(245, 169, 127, 0.4));
+        border-left: 4px solid #e88388;
+      }
+      
+      /* Match text */
+      #match-title {
+        color: #f4e8d8;
+        font-weight: 600;
+      }
+      
+      #match-desc {
+        color: #a6adc8;
+        font-size: 12px;
+        margin-top: 4px;
+      }
+      
+      /* Plugin info */
+      #plugin {
+        color: #f5a97f;
+        font-size: 11px;
+        font-weight: 500;
+        margin-right: 8px;
+      }
+    '';
+    
+    # Plugin configurations
+    extraConfigFiles = {
+      # Applications plugin
+      "applications.ron".text = ''
+        Config(
+          desktop_actions: false,
+          max_entries: 8,
+          terminal: Some("kitty"),
+        )
+      '';
+      
+      # Symbols/Emoji plugin
+      "symbols.ron".text = ''
+        Config(
+          prefix: "::",
+          symbols: {
+            // Emoji shortcuts
+            "heart": "❤️",
+            "rose": "🌹",
+            "star": "⭐",
+            "fire": "🔥",
+            "rocket": "🚀",
+            "check": "✅",
+            "cross": "❌",
+            "warning": "⚠️",
+            "info": "ℹ️",
+            "smile": "😊",
+            "laugh": "😂",
+            "think": "🤔",
+            "cool": "😎",
+            "love": "😍",
+            "sad": "😢",
+            "angry": "😠",
+            "party": "🎉",
+            "gift": "🎁",
+            "music": "🎵",
+            "game": "🎮",
+            "code": "💻",
+            "book": "📚",
+            "pen": "✍️",
+            "mail": "📧",
+            "phone": "📱",
+            "home": "🏠",
+            "work": "💼",
+            "sun": "☀️",
+            "moon": "🌙",
+            "cloud": "☁️",
+            "rain": "🌧️",
+            "snow": "❄️",
+            "tree": "🌲",
+            "flower": "🌸",
+            "leaf": "🍃",
+            "coffee": "☕",
+            "tea": "🍵",
+            "pizza": "🍕",
+            "burger": "🍔",
+            "cake": "🍰",
+            "beer": "🍺",
+            "wine": "🍷",
+            "crown": "👑",
+            "gem": "💎",
+            "ring": "💍",
+            "key": "🔑",
+            "lock": "🔒",
+            "unlock": "🔓",
+            "link": "🔗",
+            "flag": "🚩",
+            "trophy": "🏆",
+            "medal": "🏅",
+            "shield": "🛡️",
+            "sword": "⚔️",
+            "bow": "🏹",
+            "magic": "✨",
+            "sparkle": "💫",
+            "dizzy": "💫",
+            "boom": "💥",
+            "zap": "⚡",
+            "comet": "☄️",
+            "planet": "🪐",
+            "galaxy": "🌌",
+            // Symbols
+            "arrow": "→",
+            "larrow": "←",
+            "uarrow": "↑",
+            "darrow": "↓",
+            "rarrow": "➜",
+            "dash": "—",
+            "bullet": "•",
+            "ellipsis": "…",
+            "tm": "™",
+            "copy": "©",
+            "reg": "®",
+            "deg": "°",
+            "pm": "±",
+            "infty": "∞",
+            "sum": "∑",
+            "prod": "∏",
+            "sqrt": "√",
+            "int": "∫",
+            "approx": "≈",
+            "neq": "≠",
+            "leq": "≤",
+            "geq": "≥",
+            "alpha": "α",
+            "beta": "β",
+            "gamma": "γ",
+            "delta": "δ",
+            "epsilon": "ε",
+            "lambda": "λ",
+            "mu": "μ",
+            "pi": "π",
+            "sigma": "σ",
+            "omega": "ω",
+          },
+          max_entries: 8,
+        )
+      '';
+      
+      # Shell plugin
+      "shell.ron".text = ''
+        Config(
+          prefix: "!",
+          shell: Some("zsh"),
+          max_entries: 5,
+        )
+      '';
+    };
+    };
+
+
   programs.zsh = {
     enable = true;
     enableCompletion = true;
@@ -103,8 +337,8 @@
     
     settings = {
       # Princess theme colors
-      background = "#ee99a0";
-      foreground = "#f5a97f";
+      background = "#1e1e2e";
+      foreground = "#cad3f5";
       
       cursor = "#e88388";
       cursor_text_color = "#2e2a3d";
@@ -226,24 +460,24 @@
   # ROFI
   # ========================================================================
   
-  programs.rofi = {
-    enable = true;
-    package = pkgs.rofi;
-    terminal = "\${pkgs.kitty}/bin/kitty";
+#  programs.rofi = {
+ #   enable = true;
+ #   package = pkgs.rofi;
+#    terminal = "\${pkgs.kitty}/bin/kitty";
     
     # Theme will be set manually at ~/.config/hyprland/rofi/
     
-    extraConfig = {
-      modi = "drun,emoji,window";
-      show-icons = true;
-      icon-theme = "Papirus";
-      drun-display-format = "{name}";
-      disable-history = false;
-      display-drun = "  Apps";
-      display-window = " 󰕰 Windows";
-      display-emoji = " 󰞅 Emoji";
-    };
-  };
+ #   extraConfig = {
+#      modi = "drun,emoji,window";
+  #    show-icons = true;
+  #    icon-theme = "Papirus";
+  #    drun-display-format = "{name}";
+  #    disable-history = false;
+  #    display-drun = "  Apps";
+  #    display-window = " 󰕰 Windows";
+  #    display-emoji = " 󰞅 Emoji";
+  #  };
+  #};
 
   # ========================================================================
   # GTK THEME
@@ -269,23 +503,6 @@
     gtk4.extraConfig = {
       gtk-application-prefer-dark-theme = true;
     };
-  };
-
-  # ========================================================================
-  # HYPRLAND
-  # ========================================================================
-  
-  wayland.windowManager.hyprland = {
-    enable = true;
-    
-    # Config will be at ~/.config/hypr/hyprland.conf (manual)
-    extraConfig = ''
-      source = ~/.config/hypr/hyprland.conf
-      source = ~/.config/hypr/autostars.conf
-      source = ~/.config/hypr/keybinds.cibf
-      source = ~/.config/hypr/windowsrules.conf
-      source = ~/.config/hypr/themes/princess.conf
-    '';
   };
 
   # ========================================================================
