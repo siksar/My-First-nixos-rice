@@ -103,8 +103,8 @@
     
     settings = {
       # Princess theme colors
-      background = "#2e2a3d";
-      foreground = "#f4e8d8";
+      background = "#ee99a0";
+      foreground = "#f5a97f";
       
       cursor = "#e88388";
       cursor_text_color = "#2e2a3d";
@@ -299,7 +299,7 @@
     slurp
     swappy
     grimblast
-    
+    anyrun 
     # Wallpaper
     swww
     
