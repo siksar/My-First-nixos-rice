@@ -281,6 +281,10 @@
     # Config will be at ~/.config/hypr/hyprland.conf (manual)
     extraConfig = ''
       source = ~/.config/hypr/hyprland.conf
+      source = ~/.config/hypr/autostars.conf
+      source = ~/.config/hypr/keybinds.cibf
+      source = ~/.config/hypr/windowsrules.conf
+      source = ~/.config/hypr/themes/princess.conf
     '';
   };
 
