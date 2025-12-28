@@ -22,14 +22,18 @@
         ./configuration.nix
         
         # Home-manager entegrasyonu
-        home-manager.nixosModules.home-manager
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
+                  home-manager.nixosModules.home-manager
+      {
+ 
+	     home-manager = {
+          useGlobalPkgs = true;
+          useUserPackages = true;
+          backupFileExtension = "backup";  # ✅ Burada, üst seviye!
           
           # User config
-          home-manager.users.zixar = import ./home.nix;
-        }
+          users.zixar = import ./home.nix;
+        };
+	}
       ];
     };
   };
