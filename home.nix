@@ -9,15 +9,20 @@
   home.username = "zixar";
   home.homeDirectory = "/home/zixar";
 
+  # Set zsh as default shell
+  home.sessionVariables = {
+    SHELL = "${pkgs.zsh}/bin/zsh";
+  };
+
   # ========================================================================
   # GIT
   # ========================================================================
+  
   programs.git = {
     enable = true;
-    
-    settings = {
-      user.name = "zixar";
-      user.email = "halilbatuhanyilmaz@proton.me";
+    userName = "zixar";
+    userEmail = "halilbatuhanyilmaz@proton.me";
+    extraConfig = {
       init.defaultBranch = "main";
       pull.rebase = false;
     };
@@ -26,249 +31,13 @@
   # ========================================================================
   # ZSH + STARSHIP
   # ========================================================================
-  # ========================================================================
-  # ANYRUN - Modern Application Launcher
-  # ========================================================================
   
-  programs.anyrun = {
-    enable = true;
-    
-    config = {
-      # Position & Size
-      x = { fraction = 0.5; };
-      y = { fraction = 0.3; };
-      width = { fraction = 0.4; };
-      height = { absolute = 0; };  # Auto height
-      
-      # Hide settings
-      hideIcons = false;
-      ignoreExclusiveZones = false;
-      layer = "overlay";
-      hidePluginInfo = false;
-      closeOnClick = true;
-      showResultsImmediately = true;
-      maxEntries = 8;
-      
-      # Plugins (order matters!)
-      plugins = [
-        # Applications
-        "${pkgs.anyrun}/lib/libapplications.so"
-        # Symbols & Emoji
-        "${pkgs.anyrun}/lib/libsymbols.so"
-        # Shell commands
-        "${pkgs.anyrun}/lib/libshell.so"
-        # Calculator
-        # "${pkgs.anyrun}/lib/libcalc.so"  # Uncomment if you want calculator
-      ];
-    };
-    
-    # Princess Theme Styling
-    extraCss = ''
-      * {
-        all: unset;
-        font-family: "JetBrainsMono Nerd Font";
-        font-size: 14px;
-      }
-      
-      /* Main window - Princess colors */
-      #window {
-        background: rgba(46, 42, 61, 0.95);
-        border: 3px solid #e88388;
-        border-radius: 16px;
-        padding: 20px;
-      }
-      
-      /* Input box */
-      #entry {
-        background: rgba(58, 52, 71, 0.8);
-        color: #f4e8d8;
-        border: 2px solid #f5a97f;
-        border-radius: 12px;
-        padding: 12px 16px;
-        margin-bottom: 16px;
-      }
-      
-      #entry:focus {
-        border-color: #e88388;
-        box-shadow: 0 0 8px rgba(232, 131, 136, 0.4);
-      }
-      
-      /* Match list */
-      #match {
-        padding: 8px 12px;
-        margin: 4px 0;
-        border-radius: 8px;
-        transition: all 0.2s;
-      }
-      
-      #match:hover {
-        background: rgba(232, 131, 136, 0.2);
-      }
-      
-      #match:selected {
-        background: linear-gradient(135deg, rgba(232, 131, 136, 0.4), rgba(245, 169, 127, 0.4));
-        border-left: 4px solid #e88388;
-      }
-      
-      /* Match text */
-      #match-title {
-        color: #f4e8d8;
-        font-weight: 600;
-      }
-      
-      #match-desc {
-        color: #a6adc8;
-        font-size: 12px;
-        margin-top: 4px;
-      }
-      
-      /* Plugin info */
-      #plugin {
-        color: #f5a97f;
-        font-size: 11px;
-        font-weight: 500;
-        margin-right: 8px;
-      }
-    '';
-    
-    # Plugin configurations
-    extraConfigFiles = {
-      # Applications plugin
-      "applications.ron".text = ''
-        Config(
-          desktop_actions: false,
-          max_entries: 8,
-          terminal: Some("kitty"),
-        )
-      '';
-      
-      # Symbols/Emoji plugin
-      "symbols.ron".text = ''
-        Config(
-          prefix: "::",
-          symbols: {
-            // Emoji shortcuts
-            "heart": "❤️",
-            "rose": "🌹",
-            "star": "⭐",
-            "fire": "🔥",
-            "rocket": "🚀",
-            "check": "✅",
-            "cross": "❌",
-            "warning": "⚠️",
-            "info": "ℹ️",
-            "smile": "😊",
-            "laugh": "😂",
-            "think": "🤔",
-            "cool": "😎",
-            "love": "😍",
-            "sad": "😢",
-            "angry": "😠",
-            "party": "🎉",
-            "gift": "🎁",
-            "music": "🎵",
-            "game": "🎮",
-            "code": "💻",
-            "book": "📚",
-            "pen": "✍️",
-            "mail": "📧",
-            "phone": "📱",
-            "home": "🏠",
-            "work": "💼",
-            "sun": "☀️",
-            "moon": "🌙",
-            "cloud": "☁️",
-            "rain": "🌧️",
-            "snow": "❄️",
-            "tree": "🌲",
-            "flower": "🌸",
-            "leaf": "🍃",
-            "coffee": "☕",
-            "tea": "🍵",
-            "pizza": "🍕",
-            "burger": "🍔",
-            "cake": "🍰",
-            "beer": "🍺",
-            "wine": "🍷",
-            "crown": "👑",
-            "gem": "💎",
-            "ring": "💍",
-            "key": "🔑",
-            "lock": "🔒",
-            "unlock": "🔓",
-            "link": "🔗",
-            "flag": "🚩",
-            "trophy": "🏆",
-            "medal": "🏅",
-            "shield": "🛡️",
-            "sword": "⚔️",
-            "bow": "🏹",
-            "magic": "✨",
-            "sparkle": "💫",
-            "dizzy": "💫",
-            "boom": "💥",
-            "zap": "⚡",
-            "comet": "☄️",
-            "planet": "🪐",
-            "galaxy": "🌌",
-            // Symbols
-            "arrow": "→",
-            "larrow": "←",
-            "uarrow": "↑",
-            "darrow": "↓",
-            "rarrow": "➜",
-            "dash": "—",
-            "bullet": "•",
-            "ellipsis": "…",
-            "tm": "™",
-            "copy": "©",
-            "reg": "®",
-            "deg": "°",
-            "pm": "±",
-            "infty": "∞",
-            "sum": "∑",
-            "prod": "∏",
-            "sqrt": "√",
-            "int": "∫",
-            "approx": "≈",
-            "neq": "≠",
-            "leq": "≤",
-            "geq": "≥",
-            "alpha": "α",
-            "beta": "β",
-            "gamma": "γ",
-            "delta": "δ",
-            "epsilon": "ε",
-            "lambda": "λ",
-            "mu": "μ",
-            "pi": "π",
-            "sigma": "σ",
-            "omega": "ω",
-          },
-          max_entries: 8,
-        )
-      '';
-      
-      # Shell plugin
-      "shell.ron".text = ''
-        Config(
-          prefix: "!",
-          shell: Some("zsh"),
-          max_entries: 5,
-        )
-      '';
-    };
-    };
-
-
   programs.zsh = {
     enable = true;
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
-   home.sessionVariables = {
-    SHELL = "${pkgs.zsh}/bin/zsh";
-  };   
+    
     shellAliases = {
       ll = "ls -la";
       rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#nixos";
@@ -277,7 +46,6 @@
       lm = "lmstudio";
     };
     
-    # Auto fastfetch on terminal start
     initExtra = ''
       # Auto fastfetch
       if [[ -z $FASTFETCH_RAN ]]; then
@@ -298,7 +66,6 @@
     settings = {
       format = "$directory$git_branch$git_status$character";
       
-      # Princess prompt colors
       character = {
         success_symbol = "[🌹](bold #e88388)";
         error_symbol = "[✗](bold #e88388)";
@@ -396,126 +163,240 @@
   # ========================================================================
   
   programs.fastfetch = {
-  enable = true;
-  
-  settings = {
-    logo = {
-      type = "kitty-direct";
-      source = "~/.config/fastfetch/nixos-logo.jpg";  # PNG kullan!
-      width = 25;
-      height = 12;
-      padding = {
-        top = 1;
-      };
-    };
+    enable = true;
     
-    display = {
-      separator = " 🌹 ";
-      color = {
-        keys = "#e88388";
-        title = "#f5a97f";
+    settings = {
+      logo = {
+        type = "kitty-direct";
+        source = "~/.config/fastfetch/nixos-logo.png";
+        width = 25;
+        height = 12;
+        padding = {
+          top = 1;
+        };
       };
+      
+      display = {
+        separator = " 🌹 ";
+        color = {
+          keys = "#e88388";
+          title = "#f5a97f";
+        };
+      };
+      
+      modules = [
+        {
+          type = "title";
+          format = "{user-name}@{host-name}";
+        }
+        "separator"
+        {
+          type = "os";
+          key = "OS";
+        }
+        {
+          type = "host";
+          key = "Host";
+        }
+        {
+          type = "kernel";
+          key = "Kernel";
+        }
+        {
+          type = "uptime";
+          key = "Uptime";
+        }
+        {
+          type = "packages";
+          key = "Packages";
+        }
+        {
+          type = "shell";
+          key = "Shell";
+        }
+        "separator"
+        {
+          type = "display";
+          key = "Display";
+        }
+        {
+          type = "wm";
+          key = "WM";
+        }
+        {
+          type = "terminal";
+          key = "Terminal";
+        }
+        {
+          type = "terminalfont";
+          key = "Font";
+        }
+        "separator"
+        {
+          type = "cpu";
+          key = "CPU";
+        }
+        {
+          type = "gpu";
+          key = "GPU";
+        }
+        {
+          type = "memory";
+          key = "Memory";
+        }
+        {
+          type = "disk";
+          key = "Disk (/)";
+        }
+        {
+          type = "localip";
+          key = "Local IP";
+        }
+        "separator"
+        {
+          type = "locale";
+          key = "Locale";
+        }
+      ];
     };
-    
-    modules = [
-      {
-        type = "title";
-        format = "{user-name}@{host-name}";
-      }
-      "separator"
-      {
-        type = "os";
-        key = "OS";
-      }
-      {
-        type = "host";
-        key = "Host";
-      }
-      {
-        type = "kernel";
-        key = "Kernel";
-      }
-      {
-        type = "uptime";
-        key = "Uptime";
-      }
-      {
-        type = "packages";
-        key = "Packages";
-      }
-      {
-        type = "shell";
-        key = "Shell";
-      }
-      "separator"
-      {
-        type = "display";
-        key = "Display";
-      }
-      {
-        type = "wm";
-        key = "WM";
-      }
-      {
-        type = "terminal";
-        key = "Terminal";
-      }
-      {
-        type = "terminalfont";
-        key = "Font";
-      }
-      "separator"
-      {
-        type = "cpu";
-        key = "CPU";
-      }
-      {
-        type = "gpu";
-        key = "GPU";
-      }
-      {
-        type = "memory";
-        key = "Memory";
-      }
-      {
-        type = "disk";
-        key = "Disk (/)";
-      }
-      {
-        type = "localip";
-        key = "Local IP";
-      }
-      "separator"
-      {
-        type = "locale";
-        key = "Locale";
-      }
-    ];
   };
-};
 
   # ========================================================================
-  # ROFI
+  # ANYRUN - Modern Application Launcher
   # ========================================================================
   
-#  programs.rofi = {
- #   enable = true;
- #   package = pkgs.rofi;
-#    terminal = "\${pkgs.kitty}/bin/kitty";
+  programs.anyrun = {
+    enable = true;
     
-    # Theme will be set manually at ~/.config/hyprland/rofi/
+    config = {
+      # Position & Size
+      x = { fraction = 0.5; };
+      y = { fraction = 0.3; };
+      width = { fraction = 0.4; };
+      height = { absolute = 0; };
+      
+      # Settings
+      hideIcons = false;
+      ignoreExclusiveZones = false;
+      layer = "overlay";
+      hidePluginInfo = false;
+      closeOnClick = true;
+      showResultsImmediately = true;
+      maxEntries = 8;
+      
+      # Plugins
+      plugins = [
+        "${pkgs.anyrun}/lib/libapplications.so"
+        "${pkgs.anyrun}/lib/libsymbols.so"
+        "${pkgs.anyrun}/lib/libshell.so"
+      ];
+    };
     
- #   extraConfig = {
-#      modi = "drun,emoji,window";
-  #    show-icons = true;
-  #    icon-theme = "Papirus";
-  #    drun-display-format = "{name}";
-  #    disable-history = false;
-  #    display-drun = "  Apps";
-  #    display-window = " 󰕰 Windows";
-  #    display-emoji = " 󰞅 Emoji";
-  #  };
-  #};
+    # Princess Theme Styling
+    extraCss = ''
+      * {
+        all: unset;
+        font-family: "JetBrainsMono Nerd Font";
+        font-size: 14px;
+      }
+      
+      #window {
+        background: rgba(46, 42, 61, 0.95);
+        border: 3px solid #e88388;
+        border-radius: 16px;
+        padding: 20px;
+      }
+      
+      #entry {
+        background: rgba(58, 52, 71, 0.8);
+        color: #f4e8d8;
+        border: 2px solid #f5a97f;
+        border-radius: 12px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+      }
+      
+      #entry:focus {
+        border-color: #e88388;
+        box-shadow: 0 0 8px rgba(232, 131, 136, 0.4);
+      }
+      
+      #match {
+        padding: 8px 12px;
+        margin: 4px 0;
+        border-radius: 8px;
+        transition: all 0.2s;
+      }
+      
+      #match:hover {
+        background: rgba(232, 131, 136, 0.2);
+      }
+      
+      #match:selected {
+        background: linear-gradient(135deg, rgba(232, 131, 136, 0.4), rgba(245, 169, 127, 0.4));
+        border-left: 4px solid #e88388;
+      }
+      
+      #match-title {
+        color: #f4e8d8;
+        font-weight: 600;
+      }
+      
+      #match-desc {
+        color: #a6adc8;
+        font-size: 12px;
+        margin-top: 4px;
+      }
+      
+      #plugin {
+        color: #f5a97f;
+        font-size: 11px;
+        font-weight: 500;
+        margin-right: 8px;
+      }
+    '';
+    
+    # Plugin configurations
+    extraConfigFiles = {
+      "applications.ron".text = ''
+        Config(
+          desktop_actions: false,
+          max_entries: 8,
+          terminal: Some("kitty"),
+        )
+      '';
+      
+      "symbols.ron".text = ''
+        Config(
+          prefix: "::",
+          symbols: {
+            "heart": "❤️",
+            "rose": "🌹",
+            "star": "⭐",
+            "fire": "🔥",
+            "rocket": "🚀",
+            "check": "✅",
+            "cross": "❌",
+            "smile": "😊",
+            "crown": "👑",
+            "sparkle": "✨",
+            "arrow": "→",
+            "dash": "—",
+            "pi": "π",
+          },
+          max_entries: 8,
+        )
+      '';
+      
+      "shell.ron".text = ''
+        Config(
+          prefix: "!",
+          shell: Some("zsh"),
+          max_entries: 5,
+        )
+      '';
+    };
+  };
 
   # ========================================================================
   # GTK THEME
@@ -554,14 +435,11 @@
     slurp
     swappy
     grimblast
-    anyrun 
+    
     # Wallpaper
     swww
     
-    # Emoji picker
-    rofimoji
-    
-    # Fonts - FIXED SYNTAX
+    # Fonts
     jetbrains-mono
     nerd-fonts.jetbrains-mono
     font-awesome
