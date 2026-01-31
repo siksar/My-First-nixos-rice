@@ -357,6 +357,9 @@
   # PACKAGES
   # ========================================================================
   home.packages = with pkgs; [
+    # Noctalia Shell
+    noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
+
     # Clipboard & Screenshot (for Hyprland)
     wl-clipboard
     grim

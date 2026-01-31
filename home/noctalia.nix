@@ -1,15 +1,10 @@
-{ config, pkgs, noctalia, ... }:
+{ config, pkgs, lib, noctalia, ... }:
 {
   # ========================================================================
   # NOCTALIA SHELL - Modern Wayland Desktop Shell
   # ========================================================================
   
   imports = [ noctalia.homeModules.default ];
-
-  # Ensure noctalia-shell package is installed
-  home.packages = [
-    noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
-  ];
   
   programs.noctalia-shell = {
     enable = true;
