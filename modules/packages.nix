@@ -1,12 +1,10 @@
 { config, pkgs, ... }:
-
 {
   # ========================================================================
   # SYSTEM PACKAGES
   # ========================================================================
   
   nixpkgs.config.allowUnfree = true;
-
   environment.systemPackages = with pkgs; [
     # Core utilities
     vim
@@ -14,21 +12,29 @@
     git
     fastfetch
     htop
-    nvtopPackages.v3d
+    nvtopPackages.amd  # AMD için doğru paket
+    lact               # AMD GPU kontrol (gaming.nix'ten taşındı)
+    antigravity   
     # Browser & Productivity
     brave
     bitwarden-desktop
     home-manager   
+    bottles 
     # AI Tools
     lmstudio
+    localsend
+    wine
+     winetricks
+    dxvk
+    vkd3d
     # AppImage support
     appimage-run
-    antigravity
-
-    # Development tools (uncomment if needed)
+    # Development tools
     vscode
-     docker
-     docker-compose
+    docker
+        gruvbox-gtk-theme
+    gruvbox-dark-icons-gtk
+    docker-compose
   ];
   # AppImage binfmt registration
   boot.binfmt.registrations.appimage = {
@@ -39,15 +45,8 @@
     mask = ''\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff'';
     magicOrExtension = ''\x7fELF....AI\x02'';
   };
-#let
-#  antigravity = pkgs.callPackage /path/to/Google-Antigravity/antigravity.nix {};
-#in
-  # Flatpak
   services.flatpak.enable = true;
-
-  # Programs
   programs = {
-    # Git configuration
     git = {
       enable = true;
       config = {
@@ -55,10 +54,9 @@
       };
     };
     
-    # Neovim (if you want to replace vim)
-     neovim = {
-       enable = true;
-       defaultEditor = true;
-     };
+    neovim = {
+      enable = true;
+      defaultEditor = true;
+    };
   };
 }

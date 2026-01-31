@@ -1,35 +1,37 @@
 { config, pkgs, ... }:
-
 {
+  # ========================================================================
+  # GPU CONFIGURATION - AMD + NVIDIA PRIME
+  # ========================================================================
+  
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
   };
-
-  services.xserver.videoDrivers = [ "amdgpu" "nvidia" ];
-
+  
+  services.xserver.videoDrivers = [ "nvidia" ];
+  
   hardware.nvidia = {
     modesetting.enable = true;
-    package = config.boot.kernelPackages.nvidiaPackages.beta; 
-    open = true; # AI ve yeni kartlar için open module iyidir
+    package = config.boot.kernelPackages.nvidiaPackages.beta;  # Beta for RTX 5060 support
+    open = true;  # REQUIRED for RTX 50 series (Blackwell) GPUs!
     nvidiaSettings = true;
     
-    powerManagement = {
-      enable = true;
-      finegrained = true; # Pil tasarrufu
-    };
-
+    powerManagement.enable = true;
+    powerManagement.finegrained = false;  # Disable for sync mode
+    
+    # Dynamic Boost - allows GPU to use more power when CPU is idle
+    dynamicBoost.enable = true;
+    
     prime = {
-      offload = {
-        enable = true;
-        enableOffloadCmd = true;
-      };
-      # Senin önceki configdeki ID'ler (lspci ile kontrol etmen gerekebilir)
-      amdgpuBusId = "PCI:101:0:0"; 
-      nvidiaBusId = "PCI:100:0:0"; 
+      # Sync mode - Nvidia GPU always active, better for gaming
+      sync.enable = true;
+      
+      # Bus IDs from lspci (hex 64 = decimal 100, hex 65 = decimal 101)
+      amdgpuBusId = "PCI:101:0:0";
+      nvidiaBusId = "PCI:100:0:0";
     };
   };
   
-  # Nvidia için gerekli kernel parametreleri
-  boot.kernelParams = [ "nvidia-drm.modeset=1" "NVreg_DynamicBoostSupport=1" ];
+  # nvidia-powerd is started automatically when dynamicBoost is enabled
 }

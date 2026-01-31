@@ -1,95 +1,66 @@
 { config, pkgs, lib, ... }:
 {
-  boot = {
-    # ════════════════════════════════════════════════════════════════
-    # KERNEL SEÇİMİ - XanMod (Gaming/Performance optimized)
-    # ════════════════════════════════════════════════════════════════
-    kernelPackages = pkgs.linuxPackages_xanmod_latest;
-    # ════════════════════════════════════════════════════════════════
-    # KERNEL PARAMETERS - Zen 4 Optimizasyonları
-    # ════════════════════════════════════════════════════════════════
+    boot = {
+    # ========================================================================
+    # KERNEL - CachyOS Bore (Scheduler Optimized for Interactivity)
+    # ========================================================================
+    kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore;
+    
+    # ========================================================================
+    # KERNEL PARAMETERS
+    # ========================================================================
     kernelParams = [
-      # AMD P-State EPP (Energy Performance Preference)
+      # AMD P-State
       "amd_pstate=active"
-      "amd_pstate_epp=performance"
       
-      # IOMMU (NPU ve GPU için gerekli)
+      # IOMMU for GPU passthrough capability
       "iommu=pt"
       "amd_iommu=on"
       
-      # Bellek optimizasyonları
-      "transparent_hugepage=madvise"
-      "mitigations=off"  # Performans için (güvenlik riskleri var!)
-      
-      # Preemption (düşük latency)
-      "preempt=full"
-      
-      # Timer frekansı
-      "clocksource=tsc"
-      "tsc=reliable"
-      
-      # Watchdog devre dışı (enerji tasarrufu)
-      "nowatchdog"
-      "nmi_watchdog=0"
-      
-      # Split lock (Zen 4 için önemli)
-      "split_lock_detect=off"
-      
-      # NVIDIA (senin gpu.nix'teki)
+      # NVIDIA
       "nvidia-drm.modeset=1"
-    ];
-    # ════════════════════════════════════════════════════════════════
-    # KERNEL SYSCTL - Performans Tuning
-    # ════════════════════════════════════════════════════════════════
-    kernel.sysctl = {
-      # VM Tuning
-      "vm.swappiness" = 10;
-      "vm.vfs_cache_pressure" = 50;
-      "vm.dirty_ratio" = 10;
-      "vm.dirty_background_ratio" = 5;
-      "vm.page-cluster" = 0;
+      "nvidia-drm.fbdev=1"
       
-      # Network Tuning
-      "net.core.netdev_max_backlog" = 16384;
-      "net.core.somaxconn" = 8192;
-      "net.ipv4.tcp_fastopen" = 3;
-      "net.ipv4.tcp_congestion_control" = "bbr";
+      # Quiet boot
+      "quiet"
+      "loglevel=3"
       
-      # Scheduler Tuning
-      "kernel.sched_autogroup_enabled" = 1;
-      "kernel.sched_cfs_bandwidth_slice_us" = 3000;
-    };
-    # ════════════════════════════════════════════════════════════════
-    # KERNEL MODÜLLER
-    # ════════════════════════════════════════════════════════════════
-    kernelModules = [
-      "amd_pstate"       # AMD P-State driver
-      "kvm-amd"          # AMD virtualization
-      "amdgpu"           # AMD GPU
-      "zenpower"         # AMD Zen power monitoring (opsiyonel)
+      # EC (Embedded Controller) write support for power management
+      "ec_sys.write_support=1"
     ];
-    # Erken yüklenecek modüller
-    initrd.kernelModules = [
-      "amdgpu"
+    
+    # ========================================================================
+    # KERNEL MODULES
+    # ========================================================================
+    kernelModules = [ "kvm-amd" "acpi_call" ];
+    initrd.kernelModules = [ "amdgpu" ];
+    
+    # Extra kernel modules for power management
+    extraModulePackages = with config.boot.kernelPackages; [
+      acpi_call  # ACPI call for power profile control (Gigabyte EC)
     ];
   };
-  # ════════════════════════════════════════════════════════════════
-  # AMD P-STATE CPU GOVERNOR
-  # ════════════════════════════════════════════════════════════════
+
+  # ========================================================================
+  # CPU POWER MANAGEMENT
+  # ========================================================================
   powerManagement = {
     enable = true;
-    cpuFreqGovernor = "performance";  # veya "schedutil"
+    cpuFreqGovernor = "schedutil";
   };
-  # ════════════════════════════════════════════════════════════════
-  # ZRAM (Swap sıkıştırma - RAM verimliliği)
-  # ════════════════════════════════════════════════════════════════
+
+  # ========================================================================
+  # ZRAM SWAP
+  # ========================================================================
   zramSwap = {
     enable = true;
     algorithm = "zstd";
     memoryPercent = 50;
   };
-  # ════════════════════════════════════════════════════════════════
-  # HARDWARE SENSÖRLERI
-  # ════════════════════════════════════════════════════════════════
+
+  # ========================================================================
+  # HARDWARE & FIRMWARE
+  # ========================================================================
   hardware.cpu.amd.updateMicrocode = true;
+  hardware.enableRedistributableFirmware = true;
 }

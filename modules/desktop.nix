@@ -1,60 +1,87 @@
 { config, pkgs, ... }:
-
 {
   # ========================================================================
-  # GNOME DESKTOP ENVIRONMENT
+  # DESKTOP ENVIRONMENTS
   # ========================================================================
   
   services = {
     xserver = {
       enable = true;
       xkb.layout = "us";
-      
-      # Keyboard repeat optimization
       autoRepeatDelay = 300;
       autoRepeatInterval = 20;
     };
-
-#    displayManager.gdm.enable = true;
-#    desktopManager.gnome.enable = true;
   };
+
+  # ========================================================================
+  # SDDM DISPLAY MANAGER (Wayland)
+  # ========================================================================
+  services.displayManager.sddm = {
+    enable = true;
+    wayland.enable = true;
+  };
+  
+  # Auto-login for zixar
+  services.displayManager.autoLogin = {
+    enable = true;
+    user = "zixar";
+  };
+  
+  # Default session (Hyprland)
+  services.displayManager.defaultSession = "hyprland";
+
+  # ========================================================================
+  # COSMIC DESKTOP (Session option)
+  # ========================================================================
   services.desktopManager.cosmic.enable = true;
-  services.displayManager.cosmic-greeter.enable = true;
-  # GNOME bloat removal - Aggressive cleanup
-  environment.gnome.excludePackages = with pkgs; [
-    gnome-tour
-    epiphany        # Web browser
-    geary           # Mail client
-    gnome-music
-    gnome-photos
-    gnome-maps
-    cheese          # Webcam app
-    totem           # Video player
-    yelp            # Help docs
-  ];
 
-  # DConf for GNOME settings
-  programs.dconf.enable = true;
-
-  # Cursor theme fix
-  environment.variables = {
-    XCURSOR_THEME = "Adwaita";
-    XCURSOR_SIZE = "24";
-    GSETTINGS_SCHEMA_DIR = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}/glib-2.0/schemas";
-  };
-
-  # Desktop integration packages
+  # ========================================================================
+  # KDE PLASMA 6 (Session option)
+  # ========================================================================
+  services.desktopManager.plasma6.enable = true;
+  
+  # KDE specific packages
   environment.systemPackages = with pkgs; [
+    # Core KDE utilities
+    kdePackages.dolphin
+    kdePackages.ark
+    kdePackages.konsole
+    kdePackages.gwenview
+    kdePackages.spectacle
+    kdePackages.kate
+    
+    # System
     adwaita-icon-theme
     vanilla-dmz
     pavucontrol
     papirus-icon-theme
   ];
 
-  # XDG Portal for file pickers, etc.
+  # ========================================================================
+  # DCONF & GTK INTEGRATION
+  # ========================================================================
+  programs.dconf.enable = true;
+  
+  # Cursor theme
+  environment.variables = {
+    XCURSOR_THEME = "Adwaita";
+    XCURSOR_SIZE = "24";
+  };
+
+  # ========================================================================
+  # XDG PORTAL - COSMIC + KDE + GTK
+  # ========================================================================
   xdg.portal = {
     enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-    config.common.default = "gtk";
+    extraPortals = [ 
+      pkgs.xdg-desktop-portal-gtk 
+      pkgs.xdg-desktop-portal-cosmic
+      pkgs.kdePackages.xdg-desktop-portal-kde
+    ];
+    config = {
+      common.default = [ "kde" "gtk" ];
+      cosmic.default = [ "cosmic" "gtk" ];
+      kde.default = [ "kde" "gtk" ];
+    };
   };
 }

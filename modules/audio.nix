@@ -1,12 +1,10 @@
 { config, pkgs, ... }:
-
 {
   # ========================================================================
   # AUDIO STACK - PipeWire with Low Latency
   # ========================================================================
   
   security.rtkit.enable = true;
-
   services.pipewire = {
     enable = true;
     
@@ -28,7 +26,6 @@
       };
     };
   };
-
   # Bluetooth audio
   hardware.bluetooth = {
     enable = true;

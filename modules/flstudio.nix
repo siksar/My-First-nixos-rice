@@ -1,19 +1,49 @@
+{ config, pkgs, lib, ... }:  # lib eklendi!
 {
   # ════════════════════════════════════════════════════════════════
-  # AUDIO PRODUCTION TUNING (FL Studio için)
+  # WINE / BOTTLES FIX
   # ════════════════════════════════════════════════════════════════
   
-  # Kernel parametreleri (kernel.nix'e ekle)
-  boot.kernelParams = [
-    # ... mevcut parametrelerin
-    "threadirqs"  # Audio latency için
+  security.pam.loginLimits = [
+    {
+      domain = "*";
+      type = "soft";
+      item = "nice";
+      value = "-20";
+    }
+    {
+      domain = "*";
+      type = "hard";
+      item = "nice";
+      value = "-20";
+    }
+    {
+      domain = "*";
+      type = "soft";
+      item = "rtprio";
+      value = "99";
+    }
+    {
+      domain = "*";
+      type = "hard";
+      item = "rtprio";
+      value = "99";
+    }
   ];
 
-  # Sysctl tuning
-  boot.kernel.sysctl = {
-    # ... mevcut ayarların
-    "vm.swappiness" = 10;
-    "kernel.sched_rt_runtime_us" = -1;  # Realtime unlimited
+  security.rtkit.enable = true;
+
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    jack.enable = true;
+  };
+
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
   };
 
   # CPU Governor audio için

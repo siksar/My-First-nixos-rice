@@ -1,37 +1,65 @@
-{ config, pkgs, ... }:
-
+{ config, pkgs, hyprland, ... }:
 {
+  # ========================================================================
+  # IMPORTS - Modular Home Configuration
+  # ========================================================================
+  imports = [
+    ./home/hyprland.nix   # Hyprland user config
+    ./home/waybar.nix     # Waybar status bar
+    ./home/rofi.nix       # Application launcher
+    ./home/editors.nix    # VS Code, Neovim, Helix
+    ./home/dunst.nix      # Notifications
+    ./home/hyprlock.nix   # Lock screen & idle
+    ./home/tui-media.nix  # Anime/Manga TUI apps
+    ./home/wrappers.nix   # Tutorial/Examples for wrappers
+  ];
+
   # ========================================================================
   # HOME MANAGER BASE
   # ========================================================================
-  
   home.stateVersion = "25.11";
   home.username = "zixar";
   home.homeDirectory = "/home/zixar";
-
-  # Set zsh as default shell
   home.sessionVariables = {
     SHELL = "${pkgs.zsh}/bin/zsh";
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+    TERMINAL = "kitty";
+    BROWSER = "zen";
   };
+
+  # Add local bin to PATH
+  home.sessionPath = [
+    "$HOME/.local/bin"
+  ];
 
   # ========================================================================
   # GIT
   # ========================================================================
-  
   programs.git = {
     enable = true;
-    userName = "zixar";
-    userEmail = "halilbatuhanyilmaz@proton.me";
-    extraConfig = {
+    settings = {
+      user.name = "zixar";
+      user.email = "halilbatuhanyilmaz@proton.me";
       init.defaultBranch = "main";
       pull.rebase = false;
+      core.editor = "nvim";
+    };
+  };
+  
+  # Delta - Better git diff
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
+    options = {
+      syntax-theme = "gruvbox-dark";
+      line-numbers = true;
     };
   };
 
   # ========================================================================
   # ZSH + STARSHIP
   # ========================================================================
-  
   programs.zsh = {
     enable = true;
     enableCompletion = true;
@@ -39,15 +67,43 @@
     syntaxHighlighting.enable = true;
     
     shellAliases = {
-      ll = "ls -la";
+      # System
+      ll = "ls -la --color=auto";
+      la = "ls -A --color=auto";
+      l = "ls -CF --color=auto";
       rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#nixos";
       update = "cd /etc/nixos && sudo nix flake update && rebuild";
       cleanup = "sudo nix-collect-garbage -d && sudo nix-store --optimize";
+      
+      # Editors
+      v = "nvim";
+      vim = "nvim";
+      hx = "helix";
+      c = "code .";
+      
+      # Git
+      gs = "git status";
+      ga = "git add";
+      gc = "git commit";
+      gp = "git push";
+      gl = "git log --oneline -10";
+      
+      # Apps
       lm = "lmstudio";
+      
+      # Hyprland
+      hypr = "nvim ~/.config/hypr/hyprland.conf";
+      
+      # Power Control
+      gaming = "sudo power-control gaming";
+      turbo = "sudo power-control turbo";
+      tasarruf = "sudo power-control saver";
+      normal = "sudo power-control normal";
+      auto-power = "sudo power-control auto";
     };
     
-    initExtra = ''
-      # Auto fastfetch
+    initContent = ''
+      # Auto fastfetch with image
       if [[ -z $FASTFETCH_RAN ]]; then
         export FASTFETCH_RAN=1
         fastfetch
@@ -55,35 +111,52 @@
       
       # Custom functions
       mkcd() { mkdir -p "$1" && cd "$1"; }
+      
+      # Extract any archive
+      extract() {
+        if [ -f "$1" ]; then
+          case "$1" in
+            *.tar.bz2) tar xjf "$1" ;;
+            *.tar.gz)  tar xzf "$1" ;;
+            *.tar.xz)  tar xJf "$1" ;;
+            *.bz2)     bunzip2 "$1" ;;
+            *.gz)      gunzip "$1" ;;
+            *.tar)     tar xf "$1" ;;
+            *.zip)     unzip "$1" ;;
+            *.7z)      7z x "$1" ;;
+            *)         echo "'$1' cannot be extracted" ;;
+          esac
+        else
+          echo "'$1' is not a valid file"
+        fi
+      }
     '';
   };
 
-  # Starship prompt (princess theme)
   programs.starship = {
     enable = true;
     enableZshIntegration = true;
-    
     settings = {
-      format = "$directory$git_branch$git_status$character";
+      format = "[󱄅](bold #5277c3) $directory$git_branch$git_status$character";
       
       character = {
-        success_symbol = "[🌹](bold #e88388)";
-        error_symbol = "[✗](bold #e88388)";
+        success_symbol = "[❯](bold #d65d0e)";  # Gruvbox orange
+        error_symbol = "[❯](bold #cc241d)";    # Gruvbox red
       };
       
       directory = {
-        style = "bold #f5a97f";
+        style = "bold #d79921";  # Gruvbox yellow
         truncation_length = 3;
         truncate_to_repo = true;
       };
       
       git_branch = {
-        symbol = "🌿 ";
-        style = "bold #90a090";
+        symbol = " ";
+        style = "bold #689d6a";  # Gruvbox aqua
       };
       
       git_status = {
-        style = "bold #e88388";
+        style = "bold #cc241d";  # Gruvbox red
         ahead = "⇡\${count}";
         behind = "⇣\${count}";
         diverged = "⇕⇡\${ahead_count}⇣\${behind_count}";
@@ -92,369 +165,219 @@
   };
 
   # ========================================================================
-  # KITTY TERMINAL
+  # KITTY TERMINAL - Gruvbox Theme with Image Support
   # ========================================================================
-  
   programs.kitty = {
     enable = true;
-    
     font = {
       name = "JetBrainsMono Nerd Font";
       size = 12;
     };
-    
     settings = {
-      # Princess theme colors
-      background = "#1e1e2e";
-      foreground = "#cad3f5";
-      
-      cursor = "#e88388";
-      cursor_text_color = "#2e2a3d";
-      
-      selection_background = "#e88388";
-      selection_foreground = "#2e2a3d";
-      
-      # Black
-      color0 = "#1a1820";
-      color8 = "#3d3846";
-      
-      # Red (rose)
-      color1 = "#e88388";
-      color9 = "#f5c2c7";
-      
-      # Green
-      color2 = "#90a090";
-      color10 = "#b0c0b0";
-      
-      # Yellow (sunset)
-      color3 = "#f5a97f";
-      color11 = "#ffc9a0";
-      
-      # Blue (lavender)
-      color4 = "#a8b4d8";
-      color12 = "#c8d4f8";
-      
-      # Magenta (dusty pink)
-      color5 = "#d4b5d4";
-      color13 = "#f4d5f4";
-      
-      # Cyan
-      color6 = "#a0c0c0";
-      color14 = "#c0e0e0";
-      
-      # White (cream)
-      color7 = "#f4e8d8";
-      color15 = "#ffffff";
-      
-      # Window
-      background_opacity = "0.92";
-      window_padding_width = 12;
-      
-      # No bell
-      enable_audio_bell = false;
+      # Gruvbox Dark Hard
+      background = "#1d2021";
+      foreground = "#ebdbb2";
       
       # Cursor
+      cursor = "#d65d0e";
+      cursor_text_color = "#1d2021";
+      
+      # Selection
+      selection_background = "#d65d0e";
+      selection_foreground = "#1d2021";
+      
+      # Black
+      color0 = "#282828";
+      color8 = "#928374";
+      
+      # Red
+      color1 = "#cc241d";
+      color9 = "#fb4934";
+      
+      # Green
+      color2 = "#98971a";
+      color10 = "#b8bb26";
+      
+      # Yellow
+      color3 = "#d79921";
+      color11 = "#fabd2f";
+      
+      # Blue
+      color4 = "#458588";
+      color12 = "#83a598";
+      
+      # Magenta
+      color5 = "#b16286";
+      color13 = "#d3869b";
+      
+      # Cyan
+      color6 = "#689d6a";
+      color14 = "#8ec07c";
+      
+      # White
+      color7 = "#a89984";
+      color15 = "#ebdbb2";
+      
+      # UI
+      background_opacity = "0.95";
+      window_padding_width = 12;
+      enable_audio_bell = false;
       cursor_blink_interval = 0;
+      confirm_os_window_close = 0;
+      
+      # URL
+      url_color = "#83a598";
+      url_style = "curly";
+      
+      # Tab bar
+      tab_bar_edge = "bottom";
+      tab_bar_style = "powerline";
+      tab_powerline_style = "slanted";
+      active_tab_background = "#d65d0e";
+      active_tab_foreground = "#1d2021";
+      inactive_tab_background = "#3c3836";
+      inactive_tab_foreground = "#a89984";
+      
+      # Image protocol (for fastfetch, etc.)
+      allow_hyperlinks = "yes";
+    };
+    
+    keybindings = {
+      "ctrl+shift+t" = "new_tab";
+      "ctrl+shift+w" = "close_tab";
+      "ctrl+shift+left" = "previous_tab";
+      "ctrl+shift+right" = "next_tab";
+      "ctrl+shift+c" = "copy_to_clipboard";
+      "ctrl+shift+v" = "paste_from_clipboard";
+      "ctrl+plus" = "change_font_size all +2.0";
+      "ctrl+minus" = "change_font_size all -2.0";
+      "ctrl+0" = "change_font_size all 0";
     };
   };
 
   # ========================================================================
-  # FASTFETCH
+  # FASTFETCH - With Kitty Image Support
   # ========================================================================
-  
   programs.fastfetch = {
     enable = true;
-    
     settings = {
       logo = {
-        type = "kitty-direct";
-        source = "~/.config/fastfetch/nixos-logo.jpg";
-        width = 30;
-        height = 30;
-        padding = {
-          top = 1;
-        };
-      };
-      
-      display = {
-        separator = " 🌹 ";
+        type = "builtin";
+        source = "nixos";
         color = {
-          keys = "#e88388";
-          title = "#f5a97f";
+          "1" = "cyan";
+          "2" = "green";
         };
       };
-      
+      display = {
+        separator = ": ";
+        color = {
+          keys = "yellow";
+          title = "red";
+        };
+      };
       modules = [
         {
           type = "title";
           format = "{user-name}@{host-name}";
         }
         "separator"
-        {
-          type = "os";
-          key = "OS";
-        }
-        {
-          type = "host";
-          key = "Host";
-        }
-        {
-          type = "kernel";
-          key = "Kernel";
-        }
-        {
-          type = "uptime";
-          key = "Uptime";
-        }
-        {
-          type = "packages";
-          key = "Packages";
-        }
-        {
-          type = "shell";
-          key = "Shell";
-        }
+        { type = "os"; key = "OS"; }
+        { type = "host"; key = "Host"; }
+        { type = "kernel"; key = "Kernel"; }
+        { type = "uptime"; key = "Uptime"; }
+        { type = "packages"; key = "Packages"; }
+        { type = "shell"; key = "Shell"; }
+        { type = "display"; key = "Display"; }
+        { type = "wm"; key = "WM"; }
+        { type = "theme"; key = "Theme"; }
+        { type = "icons"; key = "Icons"; }
+        { type = "cursor"; key = "Cursor"; }
+        { type = "terminal"; key = "Terminal"; }
+        { type = "terminalfont"; key = "Terminal Font"; }
+        { type = "cpu"; key = "CPU"; }
+        { type = "gpu"; key = "GPU"; }
+        { type = "memory"; key = "Memory"; }
+        { type = "swap"; key = "Swap"; }
+        { type = "disk"; key = "Disk (/)"; }
+        { type = "localip"; key = "Local IP"; }
+        { type = "battery"; key = "Battery"; }
+        { type = "locale"; key = "Locale"; }
         "separator"
-        {
-          type = "display";
-          key = "Display";
-        }
-        {
-          type = "wm";
-          key = "WM";
-        }
-        {
-          type = "terminal";
-          key = "Terminal";
-        }
-        {
-          type = "terminalfont";
-          key = "Font";
-        }
-        "separator"
-        {
-          type = "cpu";
-          key = "CPU";
-        }
-        {
-          type = "gpu";
-          key = "GPU";
-        }
-        {
-          type = "memory";
-          key = "Memory";
-        }
-        {
-          type = "disk";
-          key = "Disk (/)";
-        }
-        {
-          type = "localip";
-          key = "Local IP";
-        }
-        "separator"
-        {
-          type = "locale";
-          key = "Locale";
-        }
+        { type = "colors"; symbol = "block"; }
       ];
     };
   };
 
   # ========================================================================
-  # ANYRUN - Modern Application Launcher
+  # GTK THEME - Gruvbox
   # ========================================================================
-  
-  programs.anyrun = {
-    enable = true;
-    
-    config = {
-      # Position & Size
-      x = { fraction = 0.5; };
-      y = { fraction = 0.3; };
-      width = { fraction = 0.4; };
-      height = { absolute = 0; };
-      
-      # Settings
-      hideIcons = false;
-      ignoreExclusiveZones = false;
-      layer = "overlay";
-      hidePluginInfo = false;
-      closeOnClick = true;
-      showResultsImmediately = true;
-      maxEntries = 8;
-      
-      # Plugins
-      plugins = [
-       # "${pkgs.anyrun}/lib/libapplications.so"
-        "${pkgs.anyrun}/lib/libsymbols.so"
-        "${pkgs.anyrun}/lib/libshell.so"
-      ];
-    };
-    
-    # Princess Theme Styling
-    extraCss = ''
-      * {
-        all: unset;
-        font-family: "JetBrainsMono Nerd Font";
-        font-size: 14px;
-      }
-      
-      #window {
-        background: rgba(46, 42, 61, 0.95);
-        border: 3px solid #e88388;
-        border-radius: 16px;
-        padding: 20px;
-      }
-      
-      #entry {
-        background: rgba(58, 52, 71, 0.8);
-        color: #f4e8d8;
-        border: 2px solid #f5a97f;
-        border-radius: 12px;
-        padding: 12px 16px;
-        margin-bottom: 16px;
-      }
-      
-      #entry:focus {
-        border-color: #e88388;
-        box-shadow: 0 0 8px rgba(232, 131, 136, 0.4);
-      }
-      
-      #match {
-        padding: 8px 12px;
-        margin: 4px 0;
-        border-radius: 8px;
-        transition: all 0.2s;
-      }
-      
-      #match:hover {
-        background: rgba(232, 131, 136, 0.2);
-      }
-      
-      #match:selected {
-        background: linear-gradient(135deg, rgba(232, 131, 136, 0.4), rgba(245, 169, 127, 0.4));
-        border-left: 4px solid #e88388;
-      }
-      
-      #match-title {
-        color: #f4e8d8;
-        font-weight: 600;
-      }
-      
-      #match-desc {
-        color: #a6adc8;
-        font-size: 12px;
-        margin-top: 4px;
-      }
-      
-      #plugin {
-        color: #f5a97f;
-        font-size: 11px;
-        font-weight: 500;
-        margin-right: 8px;
-      }
-    '';
-    
-    # Plugin configurations
-    extraConfigFiles = {
-      "applications.ron".text = ''
-        Config(
-          desktop_actions: false,
-          max_entries: 8,
-          terminal: Some("kitty"),
-        )
-      '';
-      
-      "symbols.ron".text = ''
-        Config(
-          prefix: "::",
-          symbols: {
-            "heart": "❤️",
-            "rose": "🌹",
-            "star": "⭐",
-            "fire": "🔥",
-            "rocket": "🚀",
-            "check": "✅",
-            "cross": "❌",
-            "smile": "😊",
-            "crown": "👑",
-            "sparkle": "✨",
-            "arrow": "→",
-            "dash": "—",
-            "pi": "π",
-          },
-          max_entries: 8,
-        )
-      '';
-      
-      "shell.ron".text = ''
-        Config(
-          prefix: "!",
-          shell: Some("zsh"),
-          max_entries: 5,
-        )
-      '';
-    };
-  };
-
-  # ========================================================================
-  # GTK THEME
-  # ========================================================================
-  
   gtk = {
     enable = true;
-    
     theme = {
-      name = "Adwaita-dark";
-      package = pkgs.gnome-themes-extra;
+      name = "Gruvbox-Dark";
+      package = pkgs.gruvbox-gtk-theme;
     };
-    
     iconTheme = {
-      name = "Adwaita";
-      package = pkgs.adwaita-icon-theme;
+      name = "Papirus-Dark";
+      package = pkgs.papirus-icon-theme;
     };
-    
+    font = {
+      name = "JetBrains Mono";
+      size = 11;
+    };
     gtk3.extraConfig = {
       gtk-application-prefer-dark-theme = true;
     };
-    
     gtk4.extraConfig = {
       gtk-application-prefer-dark-theme = true;
     };
   };
 
   # ========================================================================
+  # QT THEME
+  # ========================================================================
+  qt = {
+    enable = true;
+    platformTheme.name = "gtk";
+    style.name = "adwaita-dark";
+  };
+
+  # ========================================================================
+  # CURSOR THEME
+  # ========================================================================
+  home.pointerCursor = {
+    name = "Adwaita";
+    package = pkgs.adwaita-icon-theme;
+    size = 24;
+    gtk.enable = true;
+    x11.enable = true;
+  };
+
+  # ========================================================================
   # PACKAGES
   # ========================================================================
-  
   home.packages = with pkgs; [
-    # Wayland utilities
+    # Clipboard & Screenshot (for Hyprland)
     wl-clipboard
     grim
     slurp
     swappy
     grimblast
-     # Docker tools
-    docker-compose      # Docker Compose v2
     
-    # Podman tools
-    podman-compose      # Podman Compose
-    podman-tui          # TUI for podman
+    # Container tools
+    docker-compose
+    podman-compose
+    podman-tui
+    kubectl
+    kubernetes-helm
+    k9s
+    dive
+    lazydocker
+    ctop
+    buildah
+    skopeo
     
-    # Kubernetes
-    kubectl             # Kubernetes CLI
-    kubernetes-helm     # Helm package manager
-    k9s                 # Kubernetes TUI
-    
-    # Container utilities
-    dive                # Docker image explorer
-    lazydocker          # Docker TUI
-    ctop                # Container top
-    
-    # Image building
-    buildah             # Container image builder
-    skopeo              # Container image operations
     # Wallpaper
     swww
     
@@ -463,7 +386,131 @@
     nerd-fonts.jetbrains-mono
     font-awesome
     
-    # Icon theme
+    # Icons
     papirus-icon-theme
+    
+    # Utilities
+    btop           # Better htop
+    eza            # Better ls
+    fd             # Better find
+    ripgrep        # Better grep
+    fzf            # Fuzzy finder
+    bat            # Better cat
+    jq             # JSON processor
+    yq             # YAML processor
+    tree           # Directory tree
+    unzip
+    p7zip
+    
+    # Media
+    mpv
+    imv            # Image viewer
+    
+    # Social
+    discord
+    
+    # Development
+    git-lfs
+    lazygit
+    
+    # Wayland utilities
+    wtype          # For rofimoji
+    wev            # Wayland event viewer
   ];
+
+  # ========================================================================
+  # XDG
+  # ========================================================================
+  xdg = {
+    enable = true;
+    userDirs = {
+      enable = true;
+      createDirectories = true;
+      desktop = "${config.home.homeDirectory}/Desktop";
+      documents = "${config.home.homeDirectory}/Documents";
+      download = "${config.home.homeDirectory}/Downloads";
+      music = "${config.home.homeDirectory}/Music";
+      pictures = "${config.home.homeDirectory}/Pictures";
+      videos = "${config.home.homeDirectory}/Videos";
+    };
+    mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "text/html" = "app.zen_browser.zen.desktop";
+        "x-scheme-handler/http" = "app.zen_browser.zen.desktop";
+        "x-scheme-handler/https" = "app.zen_browser.zen.desktop";
+        "image/png" = "imv.desktop";
+        "image/jpeg" = "imv.desktop";
+        "image/gif" = "imv.desktop";
+        "video/mp4" = "mpv.desktop";
+        "video/mkv" = "mpv.desktop";
+        "inode/directory" = "thunar.desktop";
+      };
+    };
+  };
+
+  # ========================================================================
+  # DIRENV
+  # ========================================================================
+  programs.direnv = {
+    enable = true;
+    enableZshIntegration = true;
+    nix-direnv.enable = true;
+  };
+
+  # ========================================================================
+  # FZF
+  # ========================================================================
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+    colors = {
+      # Gruvbox colors for fzf
+      "bg+" = "#3c3836";
+      "bg" = "#282828";
+      "spinner" = "#fb4934";
+      "hl" = "#83a598";
+      "fg" = "#ebdbb2";
+      "header" = "#8ec07c";
+      "info" = "#fabd2f";
+      "pointer" = "#fb4934";
+      "marker" = "#fb4934";
+      "fg+" = "#ebdbb2";
+      "prompt" = "#fb4934";
+      "hl+" = "#83a598";
+    };
+  };
+
+  # ========================================================================
+  # EZA (Better ls)
+  # ========================================================================
+  programs.eza = {
+    enable = true;
+    enableZshIntegration = true;
+    git = true;
+    icons = "auto";
+  };
+
+  # ========================================================================
+  # BAT (Better cat)
+  # ========================================================================
+  programs.bat = {
+    enable = true;
+    config = {
+      theme = "gruvbox-dark";
+      pager = "less -FR";
+    };
+  };
+
+  # ========================================================================
+  # BTOP
+  # ========================================================================
+  programs.btop = {
+    enable = true;
+    settings = {
+      color_theme = "gruvbox_dark";
+      theme_background = false;
+      vim_keys = true;
+    };
+  };
 }

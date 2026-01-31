@@ -1,39 +1,51 @@
 {
   description = "Zixar's NixOS Configuration";
-
+  
   inputs = {
-    # nixpkgs: NixOS 25.11 stable
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
- #    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
- #   antigravity.url = "path:/path/to/Google-Antigravity";
-    # Home-manager: User-level packages
+    
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
-      inputs.nixpkgs.follows = "nixpkgs";  # Aynı nixpkgs'i kullan
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    
+    # Hyprland - Latest features
+    hyprland.url = "github:hyprwm/Hyprland";
+    
+    # CachyOS Kernel - Performance optimized
+    nix-cachyos-kernel = {
+      url = "github:xddxdd/nix-cachyos-kernel/release";
+      # Do NOT override nixpkgs - prevents version mismatch
     };
   };
-  outputs = { self, nixpkgs, home-manager, ... }: {
+  
+  outputs = { self, nixpkgs, home-manager, hyprland, nix-cachyos-kernel, ... }: {
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-# Modüllere argüman olarak geçiyoruz
+      
+      specialArgs = { inherit hyprland; };
+      
       modules = [
-        # Ana config - Bu zaten tüm modülleri import ediyor!
-        # (nvidia.nix, desktop.nix, gaming.nix vs.)
         ./configuration.nix
         
-        # Home-manager entegrasyonu
-                  home-manager.nixosModules.home-manager
-      {
- 
-	     home-manager = {
-          useGlobalPkgs = true;
-          useUserPackages = true;
-          backupFileExtension = "backup";  # ✅ Burada, üst seviye!
-          
-          # User config
-          users.zixar = import ./home.nix;
-        };
-	}
+        # CachyOS Kernel overlay
+        ({ pkgs, ... }: {
+          nixpkgs.overlays = [
+            nix-cachyos-kernel.overlays.pinned
+          ];
+        })
+        
+        # Hyprland NixOS module
+        hyprland.nixosModules.default
+      ];
+    };
+
+    # Standalone Home Manager Configuration
+    homeConfigurations."zixar" = home-manager.lib.homeManagerConfiguration {
+      pkgs = nixpkgs.legacyPackages.x86_64-linux;
+      extraSpecialArgs = { inherit hyprland; };
+      modules = [
+        ./home.nix
       ];
     };
   };
