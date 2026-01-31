@@ -1,35 +1,21 @@
-{ config, pkgs, hyprland, ... }:
+{ config, pkgs, ... }:
 {
   # ========================================================================
-  # HYPRLAND USER CONFIGURATION - Gruvbox Theme
+  # HYPRLAND USER CONFIGURATION
   # ========================================================================
   
   wayland.windowManager.hyprland = {
     enable = true;
-    package = hyprland.packages.${pkgs.system}.hyprland;
-    systemd.enable = true;
+    xwayland.enable = true;
     
     settings = {
       # ====================================================================
       # MONITORS
       # ====================================================================
-      monitor = ",preferred,auto,1";
-      
-      # ====================================================================
-      # GRUVBOX COLOR VARIABLES
-      # ====================================================================
-      "$bg" = "rgb(282828)";
-      "$bg1" = "rgb(3c3836)";
-      "$bg2" = "rgb(504945)";
-      "$fg" = "rgb(ebdbb2)";
-      "$fg4" = "rgb(a89984)";
-      "$red" = "rgb(cc241d)";
-      "$green" = "rgb(98971a)";
-      "$yellow" = "rgb(d79921)";
-      "$blue" = "rgb(458588)";
-      "$purple" = "rgb(b16286)";
-      "$aqua" = "rgb(689d6a)";
-      "$orange" = "rgb(d65d0e)";
+      monitor = [
+        "eDP-1, 2560x1600@60, 0x0, 1.6" # Laptop screen
+        ", preferred, auto, 1"          # Auto-detect external monitors
+      ];
       
       # ====================================================================
       # GENERAL
@@ -37,18 +23,18 @@
       general = {
         gaps_in = 5;
         gaps_out = 10;
-        border_size = 0;
-        "col.active_border" = "$orange $yellow 45deg";
-        "col.inactive_border" = "$bg1";
-        layout = "master";
-        resize_on_border = true;
+        border_size = 2;
+        "col.active_border" = "rgba(d65d0eaa) rgba(fe8019ee) 45deg";
+        "col.inactive_border" = "rgba(928374aa)";
+        layout = "dwindle";
+        allow_tearing = false;
       };
       
       # ====================================================================
       # DECORATION
       # ====================================================================
       decoration = {
-        rounding = 0;
+        rounding = 10;
         
         blur = {
           enabled = true;
@@ -62,7 +48,7 @@
           enabled = true;
           range = 12;
           render_power = 3;
-          color = "$bg";
+          color = "rgba(1d2021ee)";
         };
         
         active_opacity = 1.0;
@@ -73,7 +59,7 @@
       # INPUT
       # ====================================================================
       input = {
-        kb_layout = "us";
+        kb_layout = "tr";
         kb_variant = "";
         follow_mouse = 1;
         sensitivity = 0;
@@ -84,7 +70,6 @@
           tap-to-click = true;
         };
       };
-      
       
       # ====================================================================
       # ANIMATIONS
@@ -110,12 +95,6 @@
           "workspaces, 1, 6, gruvbox, slide"
         ];
       };
-      
-      # ====================================================================
-      # WINDOW RULES - Workstation Profiles (VM Isolation)
-      # ====================================================================
-      # Window rules moved to extraConfig to avoid syntax issues
-      # windowrulev2 = [ ... ];
       
       # ====================================================================
       # LAYOUTS
@@ -156,12 +135,11 @@
         "$mod, E, exec, thunar"
         "$mod, B, exec, brave"
         
-        # Rofi menus
-        "$mod, Z, exec, rofi -show drun -theme ~/.config/rofi/config.rasi"
-        "$mod, Tab, exec, rofi -show window -theme ~/.config/rofi/config.rasi"
-        "$mod, C, exec, cliphist list | rofi -dmenu -p 'Clipboard' | cliphist decode | wl-copy"
-        "$mod, X, exec, rofimoji --action copy"
-        "$mod, V, exec, ~/.config/rofi/scripts/powermenu.sh"
+        # NOCTALIA BINDINGS
+        "$mod, Z, exec, noctalia-shell ipc call launcher toggle"
+        "$mod, Tab, exec, noctalia-shell ipc call launcher toggle"
+        "$mod, C, exec, noctalia-shell ipc call appLauncher toggleClipboard"
+        "$mod, V, exec, noctalia-shell ipc call sessionMenu show"
         
         # Window management
         "$mod, F, fullscreen, 1"
@@ -176,7 +154,7 @@
         "$mod, up, movefocus, u"
         "$mod, down, movefocus, d"
         "$mod, h, movefocus, l"
-        "$mod, l, exec, hyprctl switchxkblayout all next"
+        "$mod, l, movefocus, r"
         "$mod, k, movefocus, u"
         "$mod, j, movefocus, d"
         
@@ -186,9 +164,12 @@
         "$mod SHIFT, up, movewindow, u"
         "$mod SHIFT, down, movewindow, d"
         "$mod SHIFT, h, movewindow, l"
-        "$mod SHIFT, l, exec, hyprlock"
+        "$mod SHIFT, l, movewindow, r"
         "$mod SHIFT, k, movewindow, u"
         "$mod SHIFT, j, movewindow, d"
+        
+        # Lock screen
+        "$mod SHIFT, L, exec, noctalia-shell ipc call lockScreen lock"
         
         # Workspaces
         "$mod, 1, workspace, 1"
@@ -223,18 +204,12 @@
         "SHIFT, Print, exec, grimblast save area ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png"
         "CTRL, Print, exec, grimblast copy screen"
         
-        # Lock screen
-        # "$mod, L, exec, hyprlock" # Rebound to Shift+L above
-        
         # Color picker
         "$mod SHIFT, C, exec, hyprpicker -a"
         
-        # Notification center
-        "$mod, N, exec, dunstctl history-pop"
-        "$mod SHIFT, N, exec, dunstctl close-all"
-        
-        # Wallpaper Cycle
-        "$mod, W, exec, ~/.local/bin/wallpaper-cycle"
+        # Noctalia Notifications (History / Close All)
+        "$mod, N, exec, noctalia-shell ipc call notifications showHistory"
+        "$mod SHIFT, N, exec, noctalia-shell ipc call notifications closeAll"
       ];
       
       # Volume and brightness (hold)
@@ -256,41 +231,22 @@
       # STARTUP APPLICATIONS
       # ====================================================================
       exec-once = [
-        # Core
-      
-        "dunst"
+        # Noctalia Shell (handles bar, wallpaper, notifications, OSD)
+        "noctalia-shell"
         
-        # Wallpaper
-        "swww-daemon"
-        "sleep 1 && swww img ~/Pictures/Wallpapers/rice.png --transition-type grow --transition-pos 0.5,0.5"
-        
-        # Clipboard
+        # Clipboard Manager
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
         
-        # Polkit
+        # Authentication Agent
         "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
-        
-        # Network applet
-        "nm-applet --indicator"
       ];
     };
     
     extraConfig = ''
-      # ====================================================================
-      # WINDOW RULES - Workstation Profiles (VM Isolation)
-      # ====================================================================
-      # windowrulev2 = workspace 2, title:^(.*Windows.*)$
-      # windowrulev2 = workspace 3, class:^(virt-manager)$
+      # Window rules
+      windowrulev2 = opacity 0.90 0.90,class:^(kitty)$
+      windowrulev2 = opacity 0.80 0.80,class:^(thunar)$
     '';
   };
-  
-  # ========================================================================
-  # HYPRPAPER - Wallpaper Configuration
-  # ========================================================================
-  home.file.".config/hypr/hyprpaper.conf".text = ''
-    preload = ~/Pictures/Wallpapers/gruvbox.jpg
-    wallpaper = ,~/Pictures/Wallpapers/gruvbox.jpg
-    splash = false
-  '';
 }
