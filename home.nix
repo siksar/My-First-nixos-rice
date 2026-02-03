@@ -427,4 +427,7 @@
       vim_keys = true;
     };
   };
+
+  # btop config dosyası için force (backup çakışmasını önler)
+  xdg.configFile."btop/btop.conf".force = true;
 }

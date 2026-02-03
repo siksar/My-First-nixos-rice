@@ -32,6 +32,14 @@
     enable = true;
     
     # ------------------------------------------------------------------------
+    # dotDir - ZSH dosyalarının konumu
+    # ------------------------------------------------------------------------
+    # Yeni standart: XDG config dizini (~/.config/zsh)
+    # Bu ayar gelecek sürümlerde varsayılan olacak
+    # ------------------------------------------------------------------------
+    dotDir = ".config/zsh";
+    
+    # ------------------------------------------------------------------------
     # enableCompletion = true
     # ------------------------------------------------------------------------
     # TAB tuşuyla otomatik tamamlamayı aktifleştirir.
