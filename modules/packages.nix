@@ -19,7 +19,7 @@
     # Hardware Diagnostics
     nvme-cli
     smartmontools
-    
+    claude-code
     # Browser & Productivity
     bitwarden-desktop
     vivaldi
