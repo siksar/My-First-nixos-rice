@@ -245,17 +245,145 @@
       })
       
       -- ====================================================================
-      -- NEOTREE
+      -- NEOTREE - Enhanced with icons and git status
       -- ====================================================================
       require("neo-tree").setup({
         close_if_last_window = true,
-        window = { width = 30 },
+        popup_border_style = "rounded",
+        enable_git_status = true,
+        enable_diagnostics = true,
+        
+        default_component_configs = {
+          indent = {
+            indent_size = 2,
+            padding = 1,
+            with_markers = true,
+            indent_marker = "│",
+            last_indent_marker = "└",
+            highlight = "NeoTreeIndentMarker",
+            with_expanders = true,
+            expander_collapsed = "",
+            expander_expanded = "",
+            expander_highlight = "NeoTreeExpander",
+          },
+          icon = {
+            folder_closed = "",
+            folder_open = "",
+            folder_empty = "",
+            default = "",
+          },
+          modified = {
+            symbol = "●",
+            highlight = "NeoTreeModified",
+          },
+          name = {
+            trailing_slash = false,
+            use_git_status_colors = true,
+          },
+          git_status = {
+            symbols = {
+              added     = "✚",
+              modified  = "",
+              deleted   = "✖",
+              renamed   = "󰁕",
+              untracked = "",
+              ignored   = "",
+              unstaged  = "󰄱",
+              staged    = "",
+              conflict  = "",
+            },
+          },
+        },
+        
+        window = {
+          width = 32,
+          mappings = {
+            ["<space>"] = "none",
+            ["<cr>"] = "open",
+            ["o"] = "open",
+            ["s"] = "open_split",
+            ["v"] = "open_vsplit",
+            ["t"] = "open_tabnew",
+            ["a"] = "add",
+            ["d"] = "delete",
+            ["r"] = "rename",
+            ["c"] = "copy",
+            ["m"] = "move",
+            ["q"] = "close_window",
+            ["R"] = "refresh",
+            ["?"] = "show_help",
+            ["<"] = "prev_source",
+            [">"] = "next_source",
+          },
+        },
+        
+        filesystem = {
+          filtered_items = {
+            visible = true,
+            hide_dotfiles = false,
+            hide_gitignored = false,
+            hide_by_name = {
+              ".git",
+              "node_modules",
+              "__pycache__",
+            },
+          },
+          follow_current_file = {
+            enabled = true,
+          },
+          use_libuv_file_watcher = true,
+        },
+        
+        git_status = {
+          window = {
+            position = "float",
+          },
+        },
       })
       
       -- ====================================================================
-      -- GITSIGNS
+      -- GITSIGNS - Enhanced with blame and navigation
       -- ====================================================================
-      require("gitsigns").setup()
+      require("gitsigns").setup({
+        signs = {
+          add          = { text = "│" },
+          change       = { text = "│" },
+          delete       = { text = "_" },
+          topdelete    = { text = "‾" },
+          changedelete = { text = "~" },
+          untracked    = { text = "┆" },
+        },
+        signcolumn = true,
+        numhl = false,
+        linehl = false,
+        word_diff = false,
+        current_line_blame = false,
+        current_line_blame_opts = {
+          virt_text = true,
+          virt_text_pos = "eol",
+          delay = 300,
+        },
+        current_line_blame_formatter = "<author>, <author_time:%Y-%m-%d> - <summary>",
+        on_attach = function(bufnr)
+          local gs = package.loaded.gitsigns
+          local function map(mode, l, r, opts)
+            opts = opts or {}
+            opts.buffer = bufnr
+            vim.keymap.set(mode, l, r, opts)
+          end
+          -- Navigation
+          map("n", "]c", function()
+            if vim.wo.diff then return "]c" end
+            vim.schedule(function() gs.next_hunk() end)
+            return "<Ignore>"
+          end, { expr = true, desc = "Next hunk" })
+          map("n", "[c", function()
+            if vim.wo.diff then return "[c" end
+            vim.schedule(function() gs.prev_hunk() end)
+            return "<Ignore>"
+          end, { expr = true, desc = "Prev hunk" })
+        end,
+      })
       
       -- ====================================================================
       -- WHICH-KEY
@@ -268,9 +396,103 @@
       require("Comment").setup()
       
       -- ====================================================================
-      -- AUTOPAIRS
+      -- AUTOPAIRS - Enhanced with cmp integration
       -- ====================================================================
-      require("nvim-autopairs").setup()
+      local npairs = require("nvim-autopairs")
+      npairs.setup({
+        check_ts = true,
+        ts_config = {
+          lua = { "string", "source" },
+          javascript = { "string", "template_string" },
+        },
+        disable_filetype = { "TelescopePrompt", "spectre_panel" },
+        fast_wrap = {
+          map = "<M-e>",
+          chars = { "{", "[", "(", '"', "'" },
+          pattern = string.gsub([[ [%'%"%)%>%]%)%}%,] ]], "%s+", ""),
+          offset = 0,
+          end_key = "$",
+          keys = "qwertyuiopzxcvbnmasdfghjkl",
+          check_comma = true,
+          highlight = "PmenuSel",
+          highlight_grey = "LineNr",
+        },
+      })
+      -- Integrate autopairs with cmp
+      local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+      local cmp = require("cmp")
+      cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+      
+      -- ====================================================================
+      -- TOGGLETERM - Terminal integration
+      -- ====================================================================
+      require("toggleterm").setup({
+        size = function(term)
+          if term.direction == "horizontal" then
+            return 15
+          elseif term.direction == "vertical" then
+            return vim.o.columns * 0.4
+          end
+        end,
+        open_mapping = [[<c-\>]],
+        hide_numbers = true,
+        shade_filetypes = {},
+        shade_terminals = true,
+        shading_factor = 2,
+        start_in_insert = true,
+        insert_mappings = true,
+        terminal_mappings = true,
+        persist_size = true,
+        direction = "float",
+        close_on_exit = true,
+        shell = vim.o.shell,
+        float_opts = {
+          border = "curved",
+          winblend = 0,
+          highlights = {
+            border = "Normal",
+            background = "Normal",
+          },
+        },
+      })
+      
+      -- Custom terminals for NixOS
+      local Terminal = require("toggleterm.terminal").Terminal
+      
+      local lazygit = Terminal:new({
+        cmd = "lazygit",
+        hidden = true,
+        direction = "float",
+        float_opts = { border = "rounded" },
+      })
+      
+      function _LAZYGIT_TOGGLE()
+        lazygit:toggle()
+      end
+      
+      local nixos_rebuild = Terminal:new({
+        cmd = "sudo nixos-rebuild switch",
+        hidden = true,
+        direction = "float",
+        close_on_exit = false,
+        float_opts = { border = "rounded" },
+      })
+      
+      function _NIXOS_REBUILD()
+        nixos_rebuild:toggle()
+      end
+      
+      local nixos_test = Terminal:new({
+        cmd = "sudo nixos-rebuild test",
+        hidden = true,
+        direction = "float",
+        close_on_exit = false,
+        float_opts = { border = "rounded" },
+      })
+      
+      function _NIXOS_TEST()
+        nixos_test:toggle()
+      end
       
       -- ====================================================================
       -- LSP
@@ -335,17 +557,22 @@
       
       -- File explorer
       keymap("n", "<leader>e", "<cmd>Neotree toggle<cr>", { desc = "Toggle Explorer" })
+      keymap("n", "<leader>o", "<cmd>Neotree focus<cr>", { desc = "Focus Explorer" })
       
       -- Telescope
       keymap("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Find Files" })
       keymap("n", "<leader>fg", "<cmd>Telescope live_grep<cr>", { desc = "Live Grep" })
       keymap("n", "<leader>fb", "<cmd>Telescope buffers<cr>", { desc = "Buffers" })
       keymap("n", "<leader>fh", "<cmd>Telescope help_tags<cr>", { desc = "Help Tags" })
+      keymap("n", "<leader>fr", "<cmd>Telescope oldfiles<cr>", { desc = "Recent Files" })
+      keymap("n", "<leader>fc", "<cmd>Telescope git_commits<cr>", { desc = "Git Commits" })
+      keymap("n", "<leader>fs", "<cmd>Telescope git_status<cr>", { desc = "Git Status" })
       
       -- Buffers
       keymap("n", "<S-l>", "<cmd>BufferLineCycleNext<cr>", { desc = "Next Buffer" })
       keymap("n", "<S-h>", "<cmd>BufferLineCyclePrev<cr>", { desc = "Prev Buffer" })
       keymap("n", "<leader>bd", "<cmd>bdelete<cr>", { desc = "Delete Buffer" })
+      keymap("n", "<leader>bp", "<cmd>BufferLinePick<cr>", { desc = "Pick Buffer" })
       
       -- Window navigation
       keymap("n", "<C-h>", "<C-w>h", { desc = "Go Left" })
@@ -359,6 +586,34 @@
       
       -- Clear highlights
       keymap("n", "<Esc>", "<cmd>nohlsearch<cr>", { desc = "Clear Highlights" })
+      
+      -- Git (gitsigns)
+      keymap("n", "<leader>gh", "<cmd>Gitsigns preview_hunk<cr>", { desc = "Preview Hunk" })
+      keymap("n", "<leader>gb", "<cmd>Gitsigns toggle_current_line_blame<cr>", { desc = "Toggle Blame" })
+      keymap("n", "<leader>gd", "<cmd>Gitsigns diffthis<cr>", { desc = "Diff This" })
+      keymap("n", "<leader>gs", "<cmd>Gitsigns stage_hunk<cr>", { desc = "Stage Hunk" })
+      keymap("n", "<leader>gr", "<cmd>Gitsigns reset_hunk<cr>", { desc = "Reset Hunk" })
+      keymap("n", "<leader>gS", "<cmd>Gitsigns stage_buffer<cr>", { desc = "Stage Buffer" })
+      keymap("n", "<leader>gR", "<cmd>Gitsigns reset_buffer<cr>", { desc = "Reset Buffer" })
+      
+      -- LazyGit
+      keymap("n", "<leader>gg", "<cmd>lua _LAZYGIT_TOGGLE()<cr>", { desc = "LazyGit" })
+      
+      -- Terminal
+      keymap("n", "<leader>tf", "<cmd>ToggleTerm direction=float<cr>", { desc = "Float Terminal" })
+      keymap("n", "<leader>th", "<cmd>ToggleTerm direction=horizontal<cr>", { desc = "Horizontal Terminal" })
+      keymap("n", "<leader>tv", "<cmd>ToggleTerm direction=vertical<cr>", { desc = "Vertical Terminal" })
+      
+      -- NixOS rebuild shortcuts
+      keymap("n", "<leader>nr", "<cmd>lua _NIXOS_REBUILD()<cr>", { desc = "NixOS Rebuild Switch" })
+      keymap("n", "<leader>nt", "<cmd>lua _NIXOS_TEST()<cr>", { desc = "NixOS Rebuild Test" })
+      
+      -- Terminal mode escape
+      keymap("t", "<Esc>", [[<C-\><C-n>]], { desc = "Exit Terminal Mode" })
+      keymap("t", "<C-h>", [[<C-\><C-n><C-w>h]], { desc = "Go Left" })
+      keymap("t", "<C-j>", [[<C-\><C-n><C-w>j]], { desc = "Go Down" })
+      keymap("t", "<C-k>", [[<C-\><C-n><C-w>k]], { desc = "Go Up" })
+      keymap("t", "<C-l>", [[<C-\><C-n><C-w>l]], { desc = "Go Right" })
     '';
   };
   
