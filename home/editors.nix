@@ -109,6 +109,7 @@
       
       # Core
       plenary-nvim
+      nui-nvim
       
       # Theme
       gruvbox-nvim
