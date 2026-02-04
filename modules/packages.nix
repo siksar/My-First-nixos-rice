@@ -11,7 +11,7 @@
     wget
     git
     fastfetch
-    htop
+    # htop - KALDIRILDI (btop kullanılıyor)
     nvtopPackages.full # AMD + NVIDIA desteği için full paket
     lact               # AMD GPU kontrol (gaming.nix'ten taşındı)
     antigravity   
@@ -22,7 +22,7 @@
     claude-code
     # Browser & Productivity
     bitwarden-desktop
-    vivaldi
+    # vivaldi - KALDIRILDI (Zen kullanılıyor)
     home-manager   
     bottles 
     # AI Tools
@@ -46,7 +46,7 @@
     # AppImage support
     appimage-run
     # Development tools
-    vscode
+    # vscode - KALDIRILDI (Neovim kullanılıyor)
     docker
     gruvbox-gtk-theme
     gruvbox-dark-icons-gtk

@@ -34,10 +34,7 @@
   # ESSENTIAL DESKTOP PACKAGES
   # ========================================================================
   environment.systemPackages = with pkgs; [
-    # File manager (lightweight alternative to Dolphin)
-    xfce.thunar
-    xfce.thunar-volman
-    xfce.thunar-archive-plugin
+    # File manager - THUNAR KALDIRILDI (Yazi kullanılıyor - home/yazi.nix)
     
     # Archive manager
     file-roller

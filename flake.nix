@@ -17,13 +17,19 @@
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    
+    # Zen Browser - Privacy-focused Firefox fork
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   
-  outputs = { self, nixpkgs, home-manager, hyprland, noctalia, ... }: {
+  outputs = { self, nixpkgs, home-manager, hyprland, noctalia, zen-browser, ... }: {
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       
-      specialArgs = { inherit hyprland noctalia; };
+      specialArgs = { inherit hyprland noctalia zen-browser; };
       
       modules = [
         ./configuration.nix
@@ -37,7 +43,7 @@
         config.allowUnfree = true;
         overlays = [];
       };
-      extraSpecialArgs = { inherit hyprland noctalia; };
+      extraSpecialArgs = { inherit hyprland noctalia zen-browser; };
       modules = [
         ./home.nix
       ];

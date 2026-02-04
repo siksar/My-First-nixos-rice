@@ -1,4 +1,4 @@
-{ config, pkgs, hyprland, noctalia, ... }:
+{ config, pkgs, hyprland, noctalia, zen-browser, ... }:
 {
   # ========================================================================
   # IMPORTS - Modular Home Configuration
@@ -256,6 +256,9 @@
   home.packages = [
     # Noctalia Shell
     noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
+    
+    # Zen Browser (Flake üzerinden - Flatpak'a gerek yok)
+    zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
   ] ++ (with pkgs; [
 
     # Clipboard & Screenshot (for Hyprland)
@@ -266,7 +269,7 @@
     grimblast
     
     # Container tools
-    docker-compose
+    # docker-compose - KALDIRILDI (packages.nix'te zaten var)
     podman-compose
     podman-tui
     kubectl
@@ -314,8 +317,7 @@
     git-lfs
     lazygit
     
-    # Browser
-    firefox
+    # Browser - FIREFOX KALDIRILDI (Zen kullanılıyor)
     
     # Wayland utilities
     wtype          # For rofimoji
@@ -348,7 +350,7 @@
         "image/gif" = "imv.desktop";
         "video/mp4" = "mpv.desktop";
         "video/mkv" = "mpv.desktop";
-        "inode/directory" = "thunar.desktop";
+        "inode/directory" = "yazi.desktop";
       };
     };
   };

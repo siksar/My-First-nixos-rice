@@ -57,9 +57,7 @@
     # Wallpaper
     swww
     
-    # File manager for Hyprland
-    xfce.thunar
-    xfce.thunar-volman
+    # File manager - THUNAR KALDIRILDI (Yazi kullanılıyor)
     
     # Network applet
     networkmanagerapplet

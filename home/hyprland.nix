@@ -131,7 +131,7 @@
         "$mod, Return, exec, kitty"
         "$mod, Q, killactive,"
         "$mod, M, exit,"
-        "$mod, E, exec, thunar"
+        "$mod, E, exec, kitty yazi"
         "$mod, B, exec, brave"
         
         # NOCTALIA BINDINGS
