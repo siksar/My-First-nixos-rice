@@ -236,8 +236,8 @@
       # STARTUP APPLICATIONS
       # ====================================================================
       exec-once = [
-        # Noctalia Shell (handles bar, wallpaper, notifications, OSD)
-        "noctalia-shell"
+        # Noctalia Shell (Managed by systemd service)
+        # "noctalia-shell"
         
         # Clipboard Manager
         "wl-paste --type text --watch cliphist store"
