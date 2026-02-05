@@ -5,6 +5,6 @@
     enable = true;
     enableZshIntegration = true;
     
-    settings = builtins.fromTOML (builtins.readFile ./themes/tokyo-night.toml);
+    settings = builtins.fromTOML (builtins.readFile ./starship/themes/tokyo-night.toml);
   };
 }
