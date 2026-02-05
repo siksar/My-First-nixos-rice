@@ -64,7 +64,7 @@
     mask = ''\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff'';
     magicOrExtension = ''\x7fELF....AI\x02'';
   };
-  services.flatpak.enable = true;
+  # services.flatpak.enable = true; # KALDIRILDI - Zen Browser artık flake üzerinden
   programs = {
     git = {
       enable = true;
