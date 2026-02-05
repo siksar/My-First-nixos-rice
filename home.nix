@@ -6,7 +6,8 @@
   imports = [
     ./home/hyprland.nix   # Hyprland user config
     ./home/noctalia.nix   # Noctalia Shell
-    ./home/zsh.nix        # ZSH + Starship
+    ./home/zsh.nix        # ZSH
+    ./home/starship.nix   # Starship Config
     # ./home/waybar.nix     # DISABLED - Using Noctalia bar
     # ./home/rofi.nix       # DISABLED - Using Noctalia launcher
     ./home/editors.nix    # VS Code, Neovim, Helix
