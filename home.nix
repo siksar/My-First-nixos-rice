@@ -14,6 +14,7 @@
     ./home/wrappers.nix   # Tutorial/Examples for wrappers
     ./home/yazi.nix       # Modern TUI File Manager
     ./home/niri.nix       # Niri (Rust) WM
+    ./home/nushell.nix    # Nushell
     ./modules/noctalia-home.nix # Noctalia Shell (Declarative)
   ];
 
@@ -24,7 +25,7 @@
   home.username = "zixar";
   home.homeDirectory = "/home/zixar";
   home.sessionVariables = {
-    SHELL = "${pkgs.zsh}/bin/zsh";
+    SHELL = "${pkgs.nushell}/bin/nu";
     EDITOR = "hx";
     VISUAL = "hx";
     TERMINAL = "alacritty";
@@ -214,6 +215,7 @@
     pkgs.macchina      # Fastfetch alt (Rust)
     pkgs.procs         # ps alt (Rust)
     pkgs.dust          # du alt (Rust)
+    pkgs.rio           # Rust based GPU Terminal
     pkgs.tokei         # code stats (Rust)
     pkgs.sd            # sed alt (Rust)
     pkgs.jaq           # jq alt (Rust-like)
@@ -325,6 +327,9 @@
       theme = "TokyoNight"
       show = ["Host", "Kernel", "Uptime", "Shell", "Terminal", "CPU", "Memory", "Battery"]
     '';
+
+    # Rio Config
+    ".config/rio/config.toml".source = ./home/rio-config.toml;
   };
 
   # ========================================================================

@@ -118,7 +118,7 @@
   users.users.zixar = {
     isNormalUser = true;
     description = "zixar";
-    shell = pkgs.zsh; 
+    shell = pkgs.nushell; 
     extraGroups = [ 
       "networkmanager" 
       "wheel" 
