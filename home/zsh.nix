@@ -239,6 +239,9 @@
         fi
       fi
     '';
+    envExtra = ''
+      export STARSHIP_CONFIG=$HOME/.config/starship/current.toml
+    '';
   };
 
   # ==========================================================================
@@ -272,15 +275,7 @@
     # ------------------------------------------------------------------------
     enableZshIntegration = true;
     
-    # ------------------------------------------------------------------------
-    # envExtra - ORTAM DEĞİŞKENLERİ
-    # ------------------------------------------------------------------------
-    # Starship konfigürasyon dosyasını belirtiyoruz.
-    # Bu sayede dinamik olarak theme-sync scripti ile değiştirebileceğiz.
-    # ------------------------------------------------------------------------
-    envExtra = ''
-      export STARSHIP_CONFIG=$HOME/.config/starship/current.toml
-    '';
+    enableZshIntegration = true;
     
     # ========================================================================
     # STARSHIP AYARLARI (settings)
