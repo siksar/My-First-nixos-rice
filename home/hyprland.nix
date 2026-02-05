@@ -143,7 +143,8 @@
         "$mod, W, exec, noctalia-shell ipc call wallpaper random"      # Wallpaper Random (Native Noctalia)
         "$mod, C, exec, noctalia-shell ipc call bluetooth togglePanel" # Bluetooth Panel (Native Noctalia)
         
-        "$mod, V, exec, noctalia-shell ipc call sessionMenu show"
+        "$mod, V, exec, zen"
+        "$mod, R, exec, kitty nvim ."
         
         # Window management
         "$mod, F, fullscreen, 1"
