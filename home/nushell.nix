@@ -66,12 +66,12 @@
         cd /etc/nixos
         git add .
         git commit -m 'auto'
-        sudo nixos-rebuild switch --flake .#nixos
+        sudo nixos-rebuild switch --flake /etc/nixos#nixos
       }
       
       def sys-full [] {
         sys-rebuild
-        home-manager switch --flake .#zixar
+        home-manager switch --flake /etc/nixos#zixar
       }
       
       def sys-clean [] {

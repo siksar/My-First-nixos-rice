@@ -41,7 +41,7 @@
   };
   
   # Global systemd timeout to kill stuck services (sound.target, etc) during shutdown
-  systemd.watchdog.rebootTime = "10s";
+  systemd.settings.Manager.RebootWatchdogSec = "10s";
   # New syntax for systemd manager configuration
   # Using systemd.settings.Manager as likely suggested by error
   systemd = {

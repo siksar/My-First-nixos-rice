@@ -38,8 +38,10 @@
   # Systemd-resolved
   services.resolved = {
     enable = true;
-    dnssec = "false";
-    domains = [ "~." ];
-    fallbackDns = [ "8.8.8.8" "8.8.4.4" ];
+    settings.Resolve = {
+      DNSSEC = "false";
+      Domains = [ "~." ];
+      FallbackDNS = [ "8.8.8.8" "8.8.4.4" ];
+    };
   };
 }
