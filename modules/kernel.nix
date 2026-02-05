@@ -40,6 +40,7 @@
       # Güç Optimizasyonu
       "workqueue.power_efficient=1"
       "pcie_aspm.policy=powersupersave"
+      "usbcore.autosuspend=-1" # Disable USB autosuspend (Fixes mouse disconnects)
       
       # NVMe Workarounds (Kingston OM8PGP4 Fixes)
       "nvme_core.default_ps_max_latency_us=0" # Disable APST (Fixes 0xc004 errors)

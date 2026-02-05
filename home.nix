@@ -79,49 +79,49 @@
       # Noctalia Settings → Color Scheme → Templates → Kitty'yi aktifleştir
       # Renkler ~/.config/kitty/current-theme.conf dosyasından dinamik olarak okunur
       
-      # Gruvbox Dark Hard
-      background = "#1d2021";
-      foreground = "#ebdbb2";
+      # Tokyo Night
+      background = "#1a1b26";
+      foreground = "#a9b1d6";
       
       # Cursor
-      cursor = "#d65d0e";
-      cursor_text_color = "#1d2021";
+      cursor = "#c0caf5";
+      cursor_text_color = "#1a1b26";
       
       # Selection
-      selection_background = "#d65d0e";
-      selection_foreground = "#1d2021";
+      selection_background = "#33467c";
+      selection_foreground = "#c0caf5";
       
       # Black
-      color0 = "#282828";
-      color8 = "#928374";
+      color0 = "#414868";
+      color8 = "#414868";
       
       # Red
-      color1 = "#cc241d";
-      color9 = "#fb4934";
+      color1 = "#f7768e";
+      color9 = "#f7768e";
       
       # Green
-      color2 = "#98971a";
-      color10 = "#b8bb26";
+      color2 = "#73daca";
+      color10 = "#73daca";
       
       # Yellow
-      color3 = "#d79921";
-      color11 = "#fabd2f";
+      color3 = "#e0af68";
+      color11 = "#e0af68";
       
       # Blue
-      color4 = "#458588";
-      color12 = "#83a598";
+      color4 = "#7aa2f7";
+      color12 = "#7aa2f7";
       
       # Magenta
-      color5 = "#b16286";
-      color13 = "#d3869b";
+      color5 = "#bb9af7";
+      color13 = "#bb9af7";
       
       # Cyan
-      color6 = "#689d6a";
-      color14 = "#8ec07c";
+      color6 = "#7dcfff";
+      color14 = "#7dcfff";
       
       # White
-      color7 = "#a89984";
-      color15 = "#ebdbb2";
+      color7 = "#c0caf5";
+      color15 = "#c0caf5";
       
       # UI
       background_opacity = "0.95";
@@ -131,17 +131,17 @@
       confirm_os_window_close = 0;
       
       # URL
-      url_color = "#83a598";
+      url_color = "#73daca";
       url_style = "curly";
       
       # Tab bar
       tab_bar_edge = "bottom";
       tab_bar_style = "powerline";
       tab_powerline_style = "slanted";
-      active_tab_background = "#d65d0e";
-      active_tab_foreground = "#1d2021";
-      inactive_tab_background = "#3c3836";
-      inactive_tab_foreground = "#a89984";
+      active_tab_background = "#7aa2f7";
+      active_tab_foreground = "#1a1b26";
+      inactive_tab_background = "#24283b";
+      inactive_tab_foreground = "#a9b1d6";
       
       # Image protocol (for fastfetch, etc.)
       allow_hyperlinks = "yes";
