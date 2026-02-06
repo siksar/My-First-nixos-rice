@@ -1,0 +1,30 @@
+/* Noctalia Template for Zen Browser */
+:root {
+    --zen-primary-color: {{colors.primary.default.hex}} !important;
+    --zen-secondary-color: {{colors.secondary.default.hex}} !important;
+    --zen-background: {{colors.surface.default.hex}} !important;
+    --zen-foreground: {{colors.on_surface.default.hex}} !important;
+    --toolbar-bgcolor: {{colors.surface.default.hex}} !important;
+    --toolbar-color: {{colors.on_surface.default.hex}} !important;
+    --tab-selected-bgcolor: {{colors.primary.default.hex}} !important;
+    --tab-selected-textcolor: {{colors.on_primary.default.hex}} !important;
+}
+
+#navigator-toolbox {
+    background-color: var(--zen-background) !important;
+}
+
+.tab-background[selected="true"] {
+    background-color: var(--tab-selected-bgcolor) !important;
+    color: var(--tab-selected-textcolor) !important;
+}
+
+/* Scrollbar */
+slider {
+    background-color: {{colors.outline.default.hex}} !important;
+}
+
+/* URL Bar */
+#urlbar-background {
+    background-color: {{colors.surface_variant.default.hex}} !important;
+}

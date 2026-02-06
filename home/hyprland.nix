@@ -53,6 +53,16 @@
         
         active_opacity = 1.0;
         inactive_opacity = 0.95;
+        
+        # Noctalia blur rules
+        layerrule = [
+          "blur, noctalia-background.*"
+          "ignorezero, noctalia-background.*"
+          "blur, noctalia-osd"
+          "ignorezero, noctalia-osd"
+          "blur, noctalia-notifications"
+          "ignorezero, noctalia-notifications"
+        ];
       };
       
       # ====================================================================
@@ -118,7 +128,7 @@
         key_press_enables_dpms = true;
         animate_manual_resizes = true;
         enable_swallow = true;
-        swallow_regex = "^(alacritty)$";
+        swallow_regex = "^(kitty)$";
       };
       
       # ====================================================================
@@ -128,10 +138,10 @@
       
       bind = [
         # Applications
-        "$mod, Return, exec, alacritty"
+        "$mod, Return, exec, kitty"
         "$mod, Q, killactive,"
         "$mod, M, exit,"
-        "$mod, E, exec, alacritty -e yazi"
+        "$mod, E, exec, thunar"
         "$mod, B, exec, brave"
         
         # NOCTALIA BINDINGS
@@ -143,8 +153,7 @@
         "$mod, W, exec, noctalia-shell ipc call wallpaper random"      # Wallpaper Random (Native Noctalia)
         "$mod, C, exec, noctalia-shell ipc call bluetooth togglePanel" # Bluetooth Panel (Native Noctalia)
         
-        "$mod, V, exec, zen"
-        "$mod, R, exec, alacritty -e hx ."
+        "$mod, V, exec, noctalia-shell ipc call sessionMenu show"
         
         # Window management
         "$mod, F, fullscreen, 1"
@@ -236,7 +245,7 @@
       # STARTUP APPLICATIONS
       # ====================================================================
       exec-once = [
-        # Noctalia Shell (Managed by systemd service)
+        # Noctalia Shell (handles bar, wallpaper, notifications, OSD)
         "noctalia-shell"
         
         # Clipboard Manager

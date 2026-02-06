@@ -4,7 +4,7 @@
   # LAPTOP POWER MANAGEMENT & UNDERVOLT TOOLS
   # Gigabyte Aero X16 1VH (AMD Ryzen + NVIDIA) için optimize edilmiş
   # ========================================================================
-services.hardware.openrgb.enable = true;
+
   environment.systemPackages = with pkgs; [
     # ─────────────────────────────────────────────────────────────────────
     # AMD RYZEN SPECIFIC TOOLS
@@ -60,7 +60,7 @@ services.hardware.openrgb.enable = true;
     nbfc-linux
     
     # OpenRGB - Keyboard and system RGB lighting control
-   # openrgb
+    openrgb
     
     # ─────────────────────────────────────────────────────────────────────
     # THERMAL MANAGEMENT
@@ -278,23 +278,8 @@ services.hardware.openrgb.enable = true;
   # ========================================================================
   # POWER PROFILES DAEMON
   # ========================================================================
-  services.auto-cpufreq = {
-    enable = true;
-    settings = {
-      battery = {
-        governor = "powersave";
-        energy_performance_preference = "power";
-        turbo = "never";
-      };
-      charger = {
-        governor = "powersave";
-        energy_performance_preference = "balance_performance";
-        turbo = "auto";
-      };
-    };
-  };
-
-  services.power-profiles-daemon.enable = false;
+  services.power-profiles-daemon.enable = true;
+  services.auto-cpufreq.enable = false;
   # Accelerometer vb. sensörler
 
   # ========================================================================
@@ -312,9 +297,9 @@ services.hardware.openrgb.enable = true;
     KERNEL=="msr", MODE="0660", GROUP="wheel"
     SUBSYSTEM=="cpu", MODE="0660", GROUP="wheel"
 
-    # Auto Power Control disabled - letting power-profiles-daemon handle this
-    # SUBSYSTEM=="power_supply", ATTR{online}=="0", RUN+="${pkgs.bash}/bin/bash /run/current-system/sw/bin/power-control saver"
-    # SUBSYSTEM=="power_supply", ATTR{online}=="1", RUN+="${pkgs.bash}/bin/bash /run/current-system/sw/bin/power-control normal"
+    # Auto Power Control on AC/Battery Switch
+    SUBSYSTEM=="power_supply", ATTR{online}=="0", RUN+="${pkgs.bash}/bin/bash /run/current-system/sw/bin/power-control saver"
+    SUBSYSTEM=="power_supply", ATTR{online}=="1", RUN+="${pkgs.bash}/bin/bash /run/current-system/sw/bin/power-control normal"
     
     # Backlight ...
     ACTION=="add", SUBSYSTEM=="backlight", RUN+="${pkgs.coreutils}/bin/chgrp video /sys/class/backlight/%k/brightness"
