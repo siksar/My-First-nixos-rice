@@ -52,7 +52,8 @@
         clip-to-geometry true
     }
 
-    spawn-at-startup "zixar-niri-session"
+    # Startup handled by systemd (graphical-session.target)
+    # spawn-at-startup "zixar-niri-session"
 
     binds {
         Mod+Return { spawn "alacritty"; }
@@ -60,6 +61,7 @@
         Mod+R { spawn "alacritty" "-e" "hx" "."; }
         Mod+B { spawn "brave"; }
         Mod+V { spawn "zen"; }
+        Mod+D { spawn "discord"; }
 
         // Noctalia Integration
         Mod+Z { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }

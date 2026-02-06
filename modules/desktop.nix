@@ -25,7 +25,7 @@
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd hyprland --asterisks --remember --remember-session --sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions";
+        command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd niri-session --asterisks --remember --remember-session --sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions";
         user = "greeter";
       };
     };

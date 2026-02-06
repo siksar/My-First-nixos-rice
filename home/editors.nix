@@ -43,8 +43,8 @@
       keys.normal = {
         space.w = ":w";
         space.q = ":q";
-        "C-d" = ["half_page_down" "center"];
-        "C-u" = ["half_page_up" "center"];
+        "C-d" = ["half_page_down" "align_view_center"];
+        "C-u" = ["half_page_up" "align_view_center"];
       };
     };
     

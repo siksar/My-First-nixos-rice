@@ -15,7 +15,7 @@
       
     # System modules
     ./modules/desktop.nix
-    ./modules/hyprland.nix
+    # ./modules/hyprland.nix
     ./modules/flstudio.nix
     ./modules/audio.nix
     ./modules/networking.nix

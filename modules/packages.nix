@@ -15,7 +15,8 @@
     
     nvtopPackages.full # AMD + NVIDIA desteği için full paket
     lact               # AMD GPU kontrol (gaming.nix'ten taşındı)
-    antigravity   
+    # antigravity - User Tool (Keeping)
+    
     
     # Hardware Diagnostics
     nvme-cli
@@ -38,7 +39,6 @@
     heroic             # Epic Games & GOG launcher
     
     # Music Applications
-    ytui-music         # YouTube Music TUI/CLI player
     ytmdesktop         # YouTube Music desktop client
     # mpv is required for ytui-music and is generally useful
     mpv                

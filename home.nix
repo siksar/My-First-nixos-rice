@@ -214,6 +214,10 @@
   home.packages = [
     # Noctalia Shell
     
+    # Portals
+    pkgs.xdg-desktop-portal-gnome
+    pkgs.xdg-desktop-portal-gtk
+    
     # Zen Browser
     zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
     
@@ -221,7 +225,6 @@
     pkgs.macchina      # Fastfetch alt (Rust)
     pkgs.procs         # ps alt (Rust)
     pkgs.dust          # du alt (Rust)
-    pkgs.rio           # Rust based GPU Terminal
     pkgs.tokei         # code stats (Rust)
     pkgs.sd            # sed alt (Rust)
     pkgs.jaq           # jq alt (Rust-like)
@@ -231,30 +234,8 @@
     
   ] ++ (with pkgs; [
     # Niri Startup Script
-    (writeShellScriptBin "zixar-niri-session" ''
-      # Force Env Vars
-      export QT_QPA_PLATFORM=wayland
-      export GDK_BACKEND=wayland
-      export SDL_VIDEODRIVER=wayland
-      export CLUTTER_BACKEND=wayland
-      export NIXOS_OZONE_WL=1
-      export XDG_CURRENT_DESKTOP=niri
-      export XDG_SESSION_TYPE=wayland
-      
-      # Import specific variables to ensure clean systemd environment
-      dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP QT_QPA_PLATFORM NIXOS_OZONE_WL XDG_SESSION_TYPE DISPLAY GDK_BACKEND
-      systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP QT_QPA_PLATFORM NIXOS_OZONE_WL XDG_SESSION_TYPE DISPLAY GDK_BACKEND
-      
-      # Start Services
-      # Stop systemd service if active to avoid conflict
-      systemctl --user stop noctalia-shell || true
-      
-      # Start Noctalia DIRECTLY (Backgrounded)
-      noctalia-shell &
-      
-      swww-daemon &
-      ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 &
-    '')
+    # Niri Session Script Removed (Using systemd services)
+    # (writeShellScriptBin "zixar-niri-session" ...
 
     # Wayland tools
     wl-clipboard
@@ -388,8 +369,8 @@
       battery = "white"
     '';
 
-    # Rio Config
-    ".config/rio/config.toml".source = ./home/rio-config.toml;
+    # Rio Config Removed
+    # ".config/rio/config.toml".source = ./home/rio-config.toml;
   };
 
   # ========================================================================
@@ -441,6 +422,39 @@
     config = {
       theme = "gruvbox-dark";
       pager = "less -FR";
+    };
+  };
+
+  # ========================================================================
+  # SYSTEMD SERVICES
+  # ========================================================================
+  systemd.user.services.swww-daemon = {
+    Unit = {
+      Description = "SWWW Wallpaper Daemon";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.swww}/bin/swww-daemon";
+      Restart = "on-failure";
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
+
+  systemd.user.services.polkit-gnome = {
+    Unit = {
+      Description = "Polkit GNOME Authentication Agent";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+      Restart = "on-failure";
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
     };
   };
 }
