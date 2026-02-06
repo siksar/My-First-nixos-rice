@@ -307,11 +307,12 @@
           output_path = "${config.home.homeDirectory}/.config/starship.toml";
         };
       };
+      };
     };
-
-    # Ensure templates are linked to the correct location for Noctalia to read
-    xdg.configFile."noctalia/templates/zen-browser.css".source = ./templates/zen-browser.css;
-    xdg.configFile."noctalia/templates/kitty.conf".source = ./templates/kitty.conf;
-    xdg.configFile."noctalia/templates/starship.toml".source = ./templates/starship.toml;
   };
+
+  # Ensure templates are linked to the correct location for Noctalia to read
+  xdg.configFile."noctalia/templates/zen-browser.css".source = ./templates/zen-browser.css;
+  xdg.configFile."noctalia/templates/kitty.conf".source = ./templates/kitty.conf;
+  xdg.configFile."noctalia/templates/starship.toml".source = ./templates/starship.toml;
 }
