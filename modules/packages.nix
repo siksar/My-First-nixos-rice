@@ -15,7 +15,7 @@
 
     nvtopPackages.full # AMD + NVIDIA desteği için full paket
     lact # AMD GPU kontrol (gaming.nix'ten taşındı)
-    antigravity - User
+    antigravity
     Tool
     (Keeping)
 
