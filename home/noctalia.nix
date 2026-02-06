@@ -307,7 +307,6 @@
           output_path = "${config.home.homeDirectory}/.config/starship.toml";
         };
       };
-      };
     };
   };
 
