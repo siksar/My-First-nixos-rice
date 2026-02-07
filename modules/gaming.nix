@@ -156,10 +156,6 @@ in
     gamescope         # Micro-compositor
     gamemode          # Performance daemon
     
-    # Controller support
-    steamctl
-    joyutils
-    evtest
     
     # Anti-cheat support
     # Already handled by NixOS steam module
