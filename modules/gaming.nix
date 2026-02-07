@@ -187,22 +187,6 @@ in
       vkbasalt
     ];
     
-    # Steam environment variables
-    extraEnv = {
-      # Performance
-      MANGOHUD = "1";
-      DXVK_ASYNC = "1";
-      PROTON_ENABLE_NVAPI = "1";
-      
-      # Compatibility
-      PROTON_USE_WINED3D = "0";
-      PROTON_NO_ESYNC = "0";
-      PROTON_NO_FSYNC = "0";
-      
-      # HUD
-      DXVK_HUD = "compiler";
-    };
-  };
 
   # =============================================================================
   # GAMEMODE - Performance daemon
