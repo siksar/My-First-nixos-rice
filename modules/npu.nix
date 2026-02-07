@@ -315,10 +315,6 @@ in
   # SYSTEM CONFIGURATION
   # =============================================================================
   
-  # Enable accelerator subsystem
-  hardware.accel = {
-    # Configuration for accelerator devices
-  };
 
   # =============================================================================
   # SERVICES
