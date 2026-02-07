@@ -45,6 +45,8 @@
     pavucontrol
     # DM
     tuigreet
+    # Xwayland satellite for Niri X11 compatibility
+    xwayland-satellite
   ];
   # ========================================================================
   # DCONF & GTK INTEGRATION

@@ -57,14 +57,15 @@
         WAYLAND_DISPLAY "wayland-1"
         XDG_SESSION_TYPE "wayland"
         XDG_CURRENT_DESKTOP "niri"
-        GDK_BACKEND "wayland"
+        GDK_BACKEND "wayland,x11"
         QT_QPA_PLATFORM "wayland"
         GTK_THEME "adw-gtk3-dark"
     }
 
     // Startup applications
+    spawn-at-startup "xwayland-satellite"
     spawn-at-startup "swww-daemon"
-    spawn-at-startup "sh" "-c" "sleep 3 && WAYLAND_DISPLAY=wayland-1 noctalia-shell"
+    spawn-at-startup "sh" "-c" "sleep 3 && WAYLAND_DISPLAY=wayland-1 GDK_BACKEND=wayland,x11 DISPLAY=:0 noctalia-shell"
 
     // Keybindings
     binds {
