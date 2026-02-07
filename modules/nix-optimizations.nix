@@ -283,7 +283,6 @@ in
   programs.ccache = {
     enable = true;
     cacheDir = "/var/cache/ccache";
-    maxSize = "50G";
     
     # Package overrides to use ccache
     packageNames = [
