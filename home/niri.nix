@@ -46,9 +46,19 @@
         }
     }
 
-    // Startup applications
+    // Environment variables for Wayland apps
+    environment {
+        WAYLAND_DISPLAY "wayland-1"
+        XDG_SESSION_TYPE "wayland"
+        XDG_CURRENT_DESKTOP "niri"
+        GDK_BACKEND "wayland"
+        QT_QPA_PLATFORM "wayland"
+        GTK_THEME "adw-gtk3-dark"
+    }
+
+    // Startup applications - using wrapper script for noctalia
     spawn-at-startup "swww-daemon"
-    spawn-at-startup "sh" "-c" "sleep 1 && noctalia-shell"
+    spawn-at-startup "${config.home.homeDirectory}/.local/bin/start-noctalia"
 
     // Keybindings
     binds {
@@ -87,6 +97,33 @@
   '';
 
   # ========================================================================
+  # NOCTALIA STARTUP SCRIPT - Ensures proper Wayland environment
+  # ========================================================================
+  home.file.".local/bin/start-noctalia" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      # Wait for Niri to fully initialize
+      sleep 2
+      
+      # Ensure Wayland display is set
+      export WAYLAND_DISPLAY=''${WAYLAND_DISPLAY:-wayland-1}
+      export XDG_SESSION_TYPE=wayland
+      export XDG_CURRENT_DESKTOP=niri
+      export GDK_BACKEND=wayland
+      export QT_QPA_PLATFORM=wayland
+      export GTK_THEME=adw-gtk3-dark
+      
+      # Suppress GTK warnings
+      export GTK_DEBUG=""
+      export G_MESSAGES_DEBUG=""
+      
+      # Start noctalia-shell
+      exec noctalia-shell
+    '';
+  };
+
+  # ========================================================================
   # NIRI PACKAGES
   # ========================================================================
   home.packages = with pkgs; [
@@ -100,6 +137,7 @@
   # Note: Common variables (NIXOS_OZONE_WL, GDK_BACKEND, GTK_THEME) are in home.nix
   home.sessionVariables = {
     MOZ_ENABLE_WAYLAND = "1";
+    XDG_CURRENT_DESKTOP = "niri";
     # Suppress GTK debug warnings
     GTK_DEBUG = "";
   };
