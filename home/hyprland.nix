@@ -1,44 +1,25 @@
 { config, pkgs, ... }:
 {
-  # ========================================================================
-  # HYPRLAND USER CONFIGURATION
-  # ========================================================================
-
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
 
     settings = {
-      # ====================================================================
-      # MONITORS
-      # ====================================================================
       monitor = [
-        "eDP-1, 2560x1600@165, 0x0, 1" # Laptop screen
-        ", preferred, auto, 1" # Auto-detect external monitors
+        "eDP-1, 2560x1600@165, 0x0, 1"
+        ", preferred, auto, 1"
       ];
 
-      # ====================================================================
-      # GENERAL
-      # ====================================================================
       general = {
         gaps_in = 5;
         gaps_out = 10;
-        border_size = 0;
-        "col.active_border" = "rgba(d65d0eaa) rgba(fe8019ee) 45deg";
-        "col.inactive_border" = "rgba(928374aa)";
+        border_size = 2;
+        "col.active_border" = "rgba(d65d0eff) rgba(fe8019ff) 45deg";
+        "col.inactive_border" = "rgba(928374ff)";
         layout = "dwindle";
         allow_tearing = false;
       };
 
-      # ====================================================================
-      # WINDOW RULES - No decorations (title bars)
-      # ====================================================================
-  
-  
-
-      # ====================================================================
-      # DECORATION
-      # ====================================================================
       decoration = {
         rounding = 10;
 
@@ -59,12 +40,8 @@
 
         active_opacity = 1.0;
         inactive_opacity = 0.95;
-
-
       };
-      # ====================================================================
-      # INPUT
-      # ====================================================================
+
       input = {
         kb_layout = "us";
         kb_variant = "";
@@ -78,9 +55,6 @@
         };
       };
 
-      # ====================================================================
-      # ANIMATIONS
-      # ====================================================================
       animations = {
         enabled = true;
 
@@ -102,9 +76,6 @@
         ];
       };
 
-      # ====================================================================
-      # LAYOUTS
-      # ====================================================================
       dwindle = {
         pseudotile = true;
         preserve_split = true;
@@ -115,9 +86,6 @@
         new_status = "master";
       };
 
-      # ====================================================================
-      # MISC
-      # ====================================================================
       misc = {
         disable_hyprland_logo = true;
         disable_splash_rendering = true;
@@ -128,13 +96,9 @@
         swallow_regex = "^(kitty|Kitty)$";
       };
 
-      # ====================================================================
-      # KEY BINDINGS
-      # ====================================================================
       "$mod" = "SUPER";
 
       bind = [
-        # Applications
         "$mod, Return, exec, kitty"
         "$mod, Q, killactive,"
         "$mod, M, exit,"
@@ -142,25 +106,20 @@
         "$mod, R, exec, kitty -e nvim /"
         "$mod, B, exec, brave"
 
-        # NOCTALIA BINDINGS
         "$mod, Z, exec, noctalia-shell ipc call launcher toggle"
         "$mod, Tab, exec, noctalia-shell ipc call launcher toggle"
 
-        # CUSTOM BINDINGS
-        "$mod, X, exec, noctalia-shell ipc call controlCenter toggle" # Control Center
-        "$mod, W, exec, noctalia-shell ipc call wallpaper random" # Wallpaper Random (Native Noctalia)
-        "$mod, C, exec, noctalia-shell ipc call bluetooth togglePanel" # Bluetooth Panel (Native Noctalia)
-
+        "$mod, X, exec, noctalia-shell ipc call controlCenter toggle"
+        "$mod, W, exec, noctalia-shell ipc call wallpaper random"
+        "$mod, C, exec, noctalia-shell ipc call bluetooth togglePanel"
         "$mod, V, exec, noctalia-shell ipc call sessionMenu show"
 
-        # Window management
         "$mod, F, fullscreen, 1"
         "$mod SHIFT, F, fullscreen, 0"
         "$mod, Space, togglefloating,"
         "$mod, P, pseudo,"
         "$mod, J, togglesplit,"
 
-        # Focus
         "$mod, left, movefocus, l"
         "$mod, right, movefocus, r"
         "$mod, up, movefocus, u"
@@ -170,7 +129,6 @@
         "$mod, k, movefocus, u"
         "$mod, j, movefocus, d"
 
-        # Move windows
         "$mod SHIFT, left, movewindow, l"
         "$mod SHIFT, right, movewindow, r"
         "$mod SHIFT, up, movewindow, u"
@@ -180,10 +138,8 @@
         "$mod SHIFT, k, movewindow, u"
         "$mod SHIFT, j, movewindow, d"
 
-        # Lock screen
         "$mod SHIFT, L, exec, noctalia-shell ipc call lockScreen lock"
 
-        # Workspaces
         "$mod, 1, workspace, 1"
         "$mod, 2, workspace, 2"
         "$mod, 3, workspace, 3"
@@ -195,7 +151,6 @@
         "$mod, 9, workspace, 9"
         "$mod, 0, workspace, 10"
 
-        # Move to workspace
         "$mod SHIFT, 1, movetoworkspace, 1"
         "$mod SHIFT, 2, movetoworkspace, 2"
         "$mod SHIFT, 3, movetoworkspace, 3"
@@ -207,24 +162,19 @@
         "$mod SHIFT, 9, movetoworkspace, 9"
         "$mod SHIFT, 0, movetoworkspace, 10"
 
-        # Scroll through workspaces
         "$mod, mouse_down, workspace, e+1"
         "$mod, mouse_up, workspace, e-1"
 
-        # Screenshot
         ", Print, exec, grimblast copy area"
         "SHIFT, Print, exec, grimblast save area ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png"
         "CTRL, Print, exec, grimblast copy screen"
 
-        # Color picker
         "$mod SHIFT, C, exec, hyprpicker -a"
 
-        # Noctalia Notifications (History / Close All)
         "$mod, N, exec, noctalia-shell ipc call notifications showHistory"
         "$mod SHIFT, N, exec, noctalia-shell ipc call notifications closeAll"
       ];
 
-      # Volume and brightness (hold)
       binde = [
         ", XF86AudioRaiseVolume, exec, pamixer -i 5"
         ", XF86AudioLowerVolume, exec, pamixer -d 5"
@@ -233,27 +183,17 @@
         ", XF86MonBrightnessDown, exec, brightnessctl s 5%-"
       ];
 
-      # Mouse bindings
       bindm = [
         "$mod, mouse:272, movewindow"
         "$mod, mouse:273, resizewindow"
       ];
 
-      # ====================================================================
-      # STARTUP APPLICATIONS
-      # ====================================================================
       exec-once = [
-        # Noctalia Shell (handles bar, wallpaper, notifications, OSD)
         "noctalia-shell"
-
-        # Clipboard Manager
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
-
-        # Authentication Agent
         "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
       ];
     };
-
   };
 }

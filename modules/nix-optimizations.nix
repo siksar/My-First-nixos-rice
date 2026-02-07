@@ -199,6 +199,11 @@ in
   programs.ccache = {
     enable = true;
     cacheDir = "/var/cache/ccache";
+    # extraConfig ile ek ayarlar yapılabilir
+    extraConfig = ''
+      max_size = 50G
+      compression = true
+    '';
   };
 
   # =============================================================================
