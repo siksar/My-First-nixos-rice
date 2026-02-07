@@ -15,7 +15,7 @@ let
   AMD_3D_VCACHE = yes;
   AMD_NB = yes;
   AMD_FD_DMA = yes;
-}
+};
 
 in
 {
