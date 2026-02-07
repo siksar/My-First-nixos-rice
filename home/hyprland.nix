@@ -119,7 +119,7 @@
         key_press_enables_dpms = true;
         animate_manual_resizes = true;
         enable_swallow = true;
-        swallow_regex = "^(kitty)$";
+        swallow_regex = "^(kitty|Kitty)$";
       };
 
       # ====================================================================
@@ -129,10 +129,11 @@
 
       bind = [
         # Applications
-        "$mod, Return, exec, ${pkgs.alacritty}/bin/alacritty"
+        "$mod, Return, exec, kitty"
         "$mod, Q, killactive,"
         "$mod, M, exit,"
-        "$mod, E, exec, thunar"
+        "$mod, E, exec, kitty -e yazi"
+        "$mod, R, exec, kitty -e nvim /"
         "$mod, B, exec, brave"
 
         # NOCTALIA BINDINGS

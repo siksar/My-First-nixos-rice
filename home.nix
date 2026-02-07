@@ -164,13 +164,13 @@
   };
 
   # ========================================================================
-  # GTK THEME - Gruvbox
+  # GTK THEME - adw-gtk3 for Noctalia theme override support
   # ========================================================================
   gtk = {
     enable = true;
     theme = {
-      name = "Gruvbox-Dark";
-      package = pkgs.gruvbox-gtk-theme;
+      name = "adw-gtk3-dark";
+      package = pkgs.adw-gtk3;
     };
     iconTheme = {
       name = "Papirus-Dark";
@@ -238,6 +238,9 @@
     # Niri Startup Script
     # Niri Session Script Removed (Using systemd services)
     # (writeShellScriptBin "zixar-niri-session" ...
+
+    # GTK Theme Management
+    nwg-look  # GTK settings editor for Noctalia compatibility
 
     # Wayland tools
     wl-clipboard

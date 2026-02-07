@@ -47,9 +47,8 @@
     }
 
     // Startup applications
-    spawn-at-startup "kitty"
     spawn-at-startup "swww-daemon"
-    spawn-at-startup "noctalia-shell"
+    spawn-at-startup "sh" "-c" "sleep 1 && noctalia-shell"
 
     // Keybindings
     binds {
@@ -101,5 +100,10 @@
   home.sessionVariables = {
     NIXOS_OZONE_WL = "1";
     MOZ_ENABLE_WAYLAND = "1";
+    # GTK compat for Noctalia
+    GTK_THEME = "adw-gtk3-dark";
+    GDK_BACKEND = "wayland,x11";
+    # Suppress GTK warnings
+    GTK_DEBUG = "";
   };
 }
