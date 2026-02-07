@@ -298,10 +298,10 @@ in
   # =============================================================================
   
   # Pre-build hook for logging
-  nix.settings.pre-build-hook = pkgs.writeShellScript "nix-pre-build" ''
-    #!${pkgs.runtimeShell}
-    echo "[NIX BUILD] Starting: $OUT"
-  '';
+  #nix.settings.pre-build-hook = pkgs.writeShellScript "nix-pre-build" ''
+  #  #!${pkgs.runtimeShell}
+  #  echo "[NIX BUILD] Starting: $OUT"
+ # '';
 
   # =============================================================================
   # SHELL CONFIGURATION
