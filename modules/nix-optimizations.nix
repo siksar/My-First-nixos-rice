@@ -140,19 +140,19 @@ in
   # NIX DAEMON SERVICE OPTIMIZATION
   # =============================================================================
 
-  systemd.services.nix-daemon = {
-    serviceConfig = {
+ # systemd.services.nix-daemon = {
+   # serviceConfig = {
       # CPU affinity - use efficiency cores for daemon
-      CPUAffinity = "4-7,12-15";
+     # CPUAffinity = "4-7,12-15";
 
       # Nice level
-      Nice = 10;
+     # Nice = 10;
 
       # IO scheduling
-      IOSchedulingClass = "idle";
-      IOSchedulingPriority = 7;
-    };
-  };
+     # IOSchedulingClass = "idle";
+    #  IOSchedulingPriority = 7;
+   # };
+  #};
 
   # =============================================================================
   # BUILD ENVIRONMENT
