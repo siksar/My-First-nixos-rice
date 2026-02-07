@@ -278,7 +278,7 @@ in
     npuBench
     
     # Accelerator tools
-    accel-config        # Intel/AMD accelerator config (if available)
+            # Intel/AMD accelerator config (if available)
     
     # AI/ML libraries with NPU support
     python3Packages.onnxruntime  # ONNX Runtime (may have NPU support)
