@@ -175,7 +175,6 @@
       noto-fonts
       noto-fonts-cjk-sans
       noto-fonts-color-emoji
-      noto-fonts-emoji
       roboto
       open-sans
     ];
