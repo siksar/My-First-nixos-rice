@@ -13,7 +13,6 @@
     "kvm-amd"
     "acpi_call"
     "amdxdna"
-    "accel"
     "zram"
     "ryzen_smu"
   ];
