@@ -209,23 +209,6 @@ in
         pin_cores = "no";  # Let scheduler handle heterogeneous cores
       };
       
-      custom = {
-        start = pkgs.writeShellScript "gamemode-start" ''
-          # Enable gaming performance mode
-          ${gamingPerf}/bin/gaming-perf on
-          
-          # Log start
-          echo "$(date): GameMode started for $UID" >> /tmp/gamemode.log
-        '';
-        
-        end = pkgs.writeShellScript "gamemode-end" ''
-          # Disable gaming performance mode
-          ${gamingPerf}/bin/gaming-perf off
-          
-          # Log end
-          echo "$(date): GameMode ended for $UID" >> /tmp/gamemode.log
-        '';
-      };
     };
   };
 
