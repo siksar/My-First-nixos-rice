@@ -3,25 +3,19 @@
 let
   # Zen 5 specific optimizations
   zen5Optimizations = with lib.kernel; {
-    # CPU scheduler
-    SCHED_ALT = lib.mkForce no;  # Use CFS for better heterogeneous support
-    SCHED_CORE = yes;            # Core scheduling for SMT
-
-    # AMD P-State
-    X86_AMD_PSTATE = module;
-    X86_AMD_PSTATE_UT = no;      # Disable test module
-
-    # CPPC (Collaborative Processor Performance Control)
-    ACPI_CPPC_LIB = yes;
-    ACPI_CPPC_CPUFREQ = module;
-
-    # AMD 3D V-Cache (if applicable)
-    AMD_3D_VCACHE = yes;
-
-    # AMD Uncore
-    AMD_NB = yes;
-    AMD_FD_DMA = yes;
-  };
+  # Çakışan ayarları kaldır veya mkForce kullan
+  # X86_AMD_PSTATE = module;  # SİL - zaten "y" olarak ayarlanmış
+  # X86_AMD_PSTATE_UT = no;   # SİL - gerek yok
+  
+  # Sadece çakışmayan ayarları bırak
+  SCHED_ALT = lib.mkForce no;
+  SCHED_CORE = yes;
+  ACPI_CPPC_LIB = yes;
+  ACPI_CPPC_CPUFREQ = module;
+  AMD_3D_VCACHE = yes;
+  AMD_NB = yes;
+  AMD_FD_DMA = yes;
+}
 
 in
 {
