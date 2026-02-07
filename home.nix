@@ -31,11 +31,12 @@
     TERMINAL = "kitty";
     BROWSER = "zen";
     QT_QPA_PLATFORM = "wayland";
-    GDK_BACKEND = "wayland";
+    GDK_BACKEND = "wayland,x11";
     SDL_VIDEODRIVER = "wayland";
     CLUTTER_BACKEND = "wayland";
     NIXOS_OZONE_WL = "1";
     XDG_SESSION_TYPE = "wayland";
+    GTK_THEME = "adw-gtk3-dark";
   };
 
   # Add local bin to PATH

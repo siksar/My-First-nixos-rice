@@ -95,15 +95,12 @@
   ];
 
   # ========================================================================
-  # ENVIRONMENT VARIABLES (for Niri session)
+  # ENVIRONMENT VARIABLES (for Niri session - Niri-specific only)
   # ========================================================================
+  # Note: Common variables (NIXOS_OZONE_WL, GDK_BACKEND, GTK_THEME) are in home.nix
   home.sessionVariables = {
-    NIXOS_OZONE_WL = "1";
     MOZ_ENABLE_WAYLAND = "1";
-    # GTK compat for Noctalia
-    GTK_THEME = "adw-gtk3-dark";
-    GDK_BACKEND = "wayland,x11";
-    # Suppress GTK warnings
+    # Suppress GTK debug warnings
     GTK_DEBUG = "";
   };
 }
