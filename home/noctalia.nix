@@ -28,7 +28,7 @@
         showOutline = false;
         showCapsule = true;
         capsuleOpacity = 1;
-        capsuleColorKey = "none";
+        capsuleColorKey = "primary";  # Primary renk kullan
         backgroundOpacity = 0.93;
         useSeparateOpacity = false;
         floating = false;
@@ -49,6 +49,8 @@
             { 
               id = "ControlCenter"; 
               useDistroLogo = true;  # Tema rengine uygun distro logosu
+              colorize = true;       # Renklendirme aktif
+              colorKey = "primary";  # Primary renk
             }
             { 
               id = "Workspace";
@@ -100,18 +102,18 @@
         showSessionButtonsOnLockScreen = true;
         enableShadows = true;
         shadowDirection = "bottom_right";
-        language = "";
+        language = "tr";  # Türkçe dil
         allowPanelsOnScreenWithoutBar = true;
         showChangelogOnStartup = false;
         telemetryEnabled = false;
       };
       
       # ==================================================================
-      # UI SETTINGS
+      # UI SETTINGS - JetBrains Mono font
       # ==================================================================
       ui = {
-        fontDefault = "";
-        fontFixed = "";
+        fontDefault = "JetBrainsMono Nerd Font";
+        fontFixed = "JetBrainsMono Nerd Font";
         fontDefaultScale = 1;
         fontFixedScale = 1;
         tooltipsEnabled = true;
@@ -199,10 +201,49 @@
       };
       
       # ==================================================================
-      # TEMPLATES - User theming enabled
+      # TEMPLATES - All applications enabled
       # ==================================================================
       templates = {
-        activeTemplates = [ ];
+        activeTemplates = [
+          "kitty"
+          "hyprland"
+          "gtk"
+          "qt"
+          "foot"
+          "alacritty"
+          "wezterm"
+          "rofi"
+          "wofi"
+          "waybar"
+          "dunst"
+          "mako"
+          "swaync"
+          "fuzzel"
+          "tofi"
+          "swaylock"
+          "hyprlock"
+          "btop"
+          "cava"
+          "discord"
+          "emacs"
+          "ghostty"
+          "helix"
+          "hyprtoolkit"
+          "kcolorscheme"
+          "mango"
+          "niri"
+          "pywalfox"
+          "spicetify"
+          "sway"
+          "telegram"
+          "vicinae"
+          "vscode"
+          "walker"
+          "yazi"
+          "zathura"
+          "zed"
+          "zen"
+        ];
         enableUserTheming = true;
       };
       
@@ -315,33 +356,33 @@
     };
     
     # ====================================================================
-    # USER TEMPLATES - Gruvbox, Tokyo Night, Catppuccin, Tonal Spot
+    # USER TEMPLATES - Write to non-conflicting paths
     # ====================================================================
     user-templates = {
       config = {
         # General template settings
       };
       templates = {
-        # Kitty terminal theme
+        # Kitty terminal theme - using include file instead of main config
         kitty = {
           input_path = "${config.home.homeDirectory}/.config/noctalia/templates/kitty.conf";
-          output_path = "${config.home.homeDirectory}/.config/kitty/current-theme.conf";
+          output_path = "${config.home.homeDirectory}/.config/kitty/noctalia-theme.conf";
           post_hook = "killall -SIGUSR1 kitty";
         };
-        # Starship prompt theme  
-        starship = {
+        # Starship prompt theme - using noctalia-specific file
+        starship-noctalia = {
           input_path = "${config.home.homeDirectory}/.config/noctalia/templates/starship.toml";
-          output_path = "${config.home.homeDirectory}/.config/starship.toml";
+          output_path = "${config.home.homeDirectory}/.config/noctalia/generated/starship.toml";
         };
-        # GTK3 theme override
-        gtk3 = {
+        # GTK3 theme override - using noctalia-specific file
+        gtk3-noctalia = {
           input_path = "${config.home.homeDirectory}/.config/noctalia/templates/gtk3.css";
-          output_path = "${config.home.homeDirectory}/.config/gtk-3.0/gtk.css";
+          output_path = "${config.home.homeDirectory}/.config/noctalia/generated/gtk3.css";
         };
-        # GTK4 theme override
-        gtk4 = {
+        # GTK4 theme override - using noctalia-specific file
+        gtk4-noctalia = {
           input_path = "${config.home.homeDirectory}/.config/noctalia/templates/gtk4.css";
-          output_path = "${config.home.homeDirectory}/.config/gtk-4.0/gtk.css";
+          output_path = "${config.home.homeDirectory}/.config/noctalia/generated/gtk4.css";
         };
       };
     };
@@ -476,4 +517,7 @@
     @define-color view_bg_color {{background}};
     @define-color view_fg_color {{foreground}};
   '';
+  
+  # Create generated directory for noctalia outputs
+  xdg.configFile."noctalia/generated/.keep".text = "";
 }

@@ -27,6 +27,9 @@
   home.username = "zixar";
   home.homeDirectory = "/home/zixar";
   
+  # Force overwrite for files that may conflict with backups
+  xdg.configFile."hypr/hyprland.conf".force = true;
+  
   home.sessionVariables = {
     SHELL = "${pkgs.nushell}/bin/nu";
     EDITOR = "nvim";
