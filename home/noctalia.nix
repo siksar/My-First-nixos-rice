@@ -27,7 +27,7 @@
         density = "comfortable";  # Comfortable büyüklük
         showOutline = false;
         showCapsule = true;
-        capsuleOpacity = 1;
+        capsuleOpacity = 0;
         capsuleColorKey = "primary";  # Primary renk kullan
         backgroundOpacity = 0.93;
         useSeparateOpacity = false;
