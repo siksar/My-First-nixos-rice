@@ -50,6 +50,13 @@
         sudo nixos-rebuild switch --flake /etc/nixos#nixos
       }
       
+      # fullrebuild as a proper nushell command (not alias!)
+      # nushell treats ';' in aliases as command separator, running second part on startup
+      def fullrebuild [] {
+        sys-rebuild
+        home-manager switch --flake /etc/nixos#zixar -b backup
+      }
+      
       def sys-full [] {
         sys-rebuild
         home-manager switch --flake /etc/nixos#zixar

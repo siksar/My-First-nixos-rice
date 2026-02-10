@@ -13,7 +13,7 @@
     ./home/tui-media.nix
     ./home/wrappers.nix
     ./home/yazi.nix
-    # ./home/niri.nix  # Disabled - using Hyprland
+    ./home/niri.nix
     ./home/nushell.nix
     ./home/kitty.nix
     ./home/gaming.nix      # User gaming config
@@ -514,7 +514,9 @@
     rebuild = "sudo nixos-rebuild switch --flake .#nixos";
     rebuild-test = "sudo nixos-rebuild test --flake .#nixos";
     zixswitch = "home-manager switch --flake /etc/nixos#zixar -b backup";
-    fullrebuild = "sudo nixos-rebuild switch --flake .#nixos ; home-manager switch --flake /etc/nixos#zixar -b backup";
+    # NOTE: fullrebuild moved to nushell.nix as a custom command (def)
+    # because nushell treats ';' in aliases as a command separator,
+    # causing the second command to run on every shell startup!
     nix-gc = "nix-collect-garbage --delete-older-than 7d";
     
     # Editors
