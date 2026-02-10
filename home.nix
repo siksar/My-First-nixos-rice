@@ -1,5 +1,5 @@
 
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, lib, inputs, ... }:
 {
   # ========================================================================
   # IMPORTS - Modular Home Configuration
@@ -37,7 +37,7 @@
     VISUAL = "nvim";
     TERMINAL = "kitty";
     BROWSER = "zen";
-    STARSHIP_CONFIG = "/home/zixar/.config/noctalia/generated/starship.toml";
+    STARSHIP_CONFIG = lib.mkForce "/home/zixar/.config/noctalia/generated/starship.toml";
     
     # Wayland
     QT_QPA_PLATFORM = "wayland;xcb";
