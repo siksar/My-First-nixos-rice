@@ -57,7 +57,6 @@
     zen-browser, 
     nix-gaming,
     nixos-hardware,
-    nixos-hardware,
     chaotic,
     caelstia,
     ... 
