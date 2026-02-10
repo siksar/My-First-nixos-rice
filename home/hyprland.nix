@@ -106,13 +106,13 @@
         "$mod, R, exec, kitty -e nvim /"
         "$mod, B, exec, brave"
 
-        "$mod, Z, exec, caelestia-shell ipc call launcher toggle"
-        "$mod, Tab, exec, caelestia-shell ipc call launcher toggle"
+        "$mod, Z, exec, noctalia-shell ipc call launcher toggle"
+        "$mod, Tab, exec, noctalia-shell ipc call launcher toggle"
 
-        "$mod, X, exec, caelestia-shell ipc call controlCenter toggle"
-        "$mod, W, exec, caelestia-shell ipc call wallpaper random"
-        "$mod, C, exec, caelestia-shell ipc call bluetooth togglePanel"
-        "$mod, V, exec, caelestia-shell ipc call sessionMenu show"
+        "$mod, X, exec, noctalia-shell ipc call controlCenter toggle"
+        "$mod, W, exec, noctalia-shell ipc call wallpaper random"
+        "$mod, C, exec, noctalia-shell ipc call bluetooth togglePanel"
+        "$mod, V, exec, noctalia-shell ipc call sessionMenu show"
 
         "$mod, F, fullscreen, 1"
         "$mod SHIFT, F, fullscreen, 0"
@@ -138,41 +138,10 @@
         "$mod SHIFT, k, movewindow, u"
         "$mod SHIFT, j, movewindow, d"
 
-        "$mod SHIFT, L, exec, caelestia-shell ipc call lockScreen lock"
+        "$mod SHIFT, L, exec, noctalia-shell ipc call lockScreen lock"
 
-        "$mod, 1, workspace, 1"
-        "$mod, 2, workspace, 2"
-        "$mod, 3, workspace, 3"
-        "$mod, 4, workspace, 4"
-        "$mod, 5, workspace, 5"
-        "$mod, 6, workspace, 6"
-        "$mod, 7, workspace, 7"
-        "$mod, 8, workspace, 8"
-        "$mod, 9, workspace, 9"
-        "$mod, 0, workspace, 10"
-
-        "$mod SHIFT, 1, movetoworkspace, 1"
-        "$mod SHIFT, 2, movetoworkspace, 2"
-        "$mod SHIFT, 3, movetoworkspace, 3"
-        "$mod SHIFT, 4, movetoworkspace, 4"
-        "$mod SHIFT, 5, movetoworkspace, 5"
-        "$mod SHIFT, 6, movetoworkspace, 6"
-        "$mod SHIFT, 7, movetoworkspace, 7"
-        "$mod SHIFT, 8, movetoworkspace, 8"
-        "$mod SHIFT, 9, movetoworkspace, 9"
-        "$mod SHIFT, 0, movetoworkspace, 10"
-
-        "$mod, mouse_down, workspace, e+1"
-        "$mod, mouse_up, workspace, e-1"
-
-        ", Print, exec, grimblast copy area"
-        "SHIFT, Print, exec, grimblast save area ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png"
-        "CTRL, Print, exec, grimblast copy screen"
-
-        "$mod SHIFT, C, exec, hyprpicker -a"
-
-        "$mod, N, exec, caelestia-shell ipc call notifications showHistory"
-        "$mod SHIFT, N, exec, caelestia-shell ipc call notifications closeAll"
+        "$mod, N, exec, noctalia-shell ipc call notifications showHistory"
+        "$mod SHIFT, N, exec, noctalia-shell ipc call notifications closeAll"
       ];
 
       binde = [
@@ -189,7 +158,7 @@
       ];
 
       exec-once = [
-        "caelestia-shell"
+        "noctalia-shell"
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
         "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
