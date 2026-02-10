@@ -5,6 +5,7 @@
     enable = true;
     enableZshIntegration = false;
     
-    settings = builtins.fromTOML (builtins.readFile ./starship/themes/tokyo-night.toml);
+    # settings - removed to allow dynamic config via STARSHIP_CONFIG env var
+    # pointing to ~/.config/noctalia/generated/starship.toml
   };
 }

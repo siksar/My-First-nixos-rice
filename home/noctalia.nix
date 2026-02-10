@@ -49,35 +49,34 @@
           left = [
             { 
               id = "ControlCenter"; 
-              useDistroLogo = true;  # Tema rengine uygun distro logosu
-              colorize = true;       # Renklendirme aktif
-              colorKey = "Secondary";  # Primary renk
+              useDistroLogo = true;
+              colorize = true; 
+              colorKey = "secondary";
             }
             { 
               id = "Workspace";
               hideUnoccupied = false;
               labelMode = "none";
+              colorKey = "secondary";
             }
           ];
           
           # MIDDLE: AudioVisualizer (Cava based)
           center = [
-            { id = "AudioVisualizer";
-              colorKey = "Secondary";
-            } 
+            { id = "AudioVisualizer"; colorKey = "secondary"; }
           ];
           
           # BOTTOM: Network widgets + Calendar
           right = [
-            { id = "Network"; }      # WiFi
-            { id = "Bluetooth"; }    # Bluetooth
-            { id = "Volume"; }       # Volume control
+            { id = "Network"; colorKey = "secondary"; } 
+            { id = "Bluetooth"; colorKey = "secondary"; }
+            { id = "Volume"; colorKey = "secondary"; }
             { 
-              id = "Clock";          # Calendar için Clock widget
+              id = "Clock";
               formatHorizontal = "HH:mm";
               formatVertical = "HH\nmm";
               useMonospacedFont = true;
-              colorKey = "Secondary";
+              colorKey = "secondary";
             }
           ];
         };

@@ -37,6 +37,7 @@
     VISUAL = "nvim";
     TERMINAL = "kitty";
     BROWSER = "zen";
+    STARSHIP_CONFIG = "/home/zixar/.config/noctalia/generated/starship.toml";
     
     # Wayland
     QT_QPA_PLATFORM = "wayland;xcb";
