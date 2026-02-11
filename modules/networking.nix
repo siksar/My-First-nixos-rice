@@ -1,47 +1,47 @@
 { config, pkgs, ... }:
 {
-  # ========================================================================
-  # NETWORKING CONFIGURATION
-  # ========================================================================
+	# ========================================================================
+	# NETWORKING CONFIGURATION
+	# ========================================================================
   
-  networking = {
-    hostName = "nixos";
+	networking = {
+		hostName = "nixos";
     
-    networkmanager = {
-      enable = true;
-      wifi.powersave = false;
-    };
+		networkmanager = {
+			enable = true;
+			wifi.powersave = false;
+		};
     
     
-    # DNS Servers (Cloudflare)
-    nameservers = [ "1.1.1.1" "1.0.0.1" ];
+		# DNS Servers (Cloudflare)
+		nameservers = [ "1.1.1.1" "1.0.0.1" ];
 
-    firewall = {
-      enable = true;
-      allowedTCPPorts = [ 27015 27036 ];
-      allowedUDPPorts = [ 27015 27031 27036 ];
-      allowedTCPPortRanges = [ ];
-      allowedUDPPortRanges = [ ];
-    };
+		firewall = {
+			enable = true;
+			allowedTCPPorts = [ 27015 27036 ];
+			allowedUDPPorts = [ 27015 27031 27036 ];
+			allowedTCPPortRanges = [ ];
+			allowedUDPPortRanges = [ ];
+		};
 
-    # Bluetooth
+		# Bluetooth
 
-  };
+	};
 
-  # Enable Bluetooth
-  hardware.bluetooth.enable = true;
-  hardware.bluetooth.powerOnBoot = true;
+	# Enable Bluetooth
+	hardware.bluetooth.enable = true;
+	hardware.bluetooth.powerOnBoot = true;
 
-  # Blueman Applet
-  services.blueman.enable = true;
+	# Blueman Applet
+	services.blueman.enable = true;
 
-  # Systemd-resolved
-  services.resolved = {
-    enable = true;
-    settings.Resolve = {
-      DNSSEC = "false";
-      Domains = [ "~." ];
-      FallbackDNS = [ "8.8.8.8" "8.8.4.4" ];
-    };
-  };
+	# Systemd-resolved
+	services.resolved = {
+		enable = true;
+		settings.Resolve = {
+			DNSSEC = "false";
+			Domains = [ "~." ];
+			FallbackDNS = [ "8.8.8.8" "8.8.4.4" ];
+		};
+	};
 }

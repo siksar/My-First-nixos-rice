@@ -32,13 +32,13 @@
 
 { pkgs, ... }:
 {
-  # Example: Creating a wrapper for 'deezer' (if installed) to force Wayland
-  home.packages = [
-    (pkgs.writeShellScriptBin "deezer-wayland" ''
-      # This is a simple wrapper script
-      export NIXOS_OZONE_WL=1
-      # Assuming 'deezer' is in your PATH (e.g. from Flatpak or other source if not in pkgs)
-      exec deezer --enable-features=UseOzonePlatform --ozone-platform=wayland "$@"
-    '')
-  ];
+	# Example: Creating a wrapper for 'deezer' (if installed) to force Wayland
+	home.packages = [
+		(pkgs.writeShellScriptBin "deezer-wayland" ''
+			# This is a simple wrapper script
+			export NIXOS_OZONE_WL=1
+			# Assuming 'deezer' is in your PATH (e.g. from Flatpak or other source if not in pkgs)
+			exec deezer --enable-features=UseOzonePlatform --ozone-platform=wayland "$@"
+		'')
+	];
 }
