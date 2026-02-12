@@ -298,7 +298,7 @@ in
                 // Noctalia Shell - delayed start to ensure Wayland socket is ready
                 // DISPLAY and GDK_BACKEND set in environment block above
                 spawn-at-startup "sh" "-c" "systemctl --user stop dunst mako swaync; pkill -f dunst; pkill -f mako; pkill -f swaync"
-                spawn-at-startup "sh" "-c" "noctalia-shell"
+                // spawn-at-startup "sh" "-c" "noctalia-shell"
 
                 // ====================================================================
                 // HOTKEY OVERLAY (built-in which-key, Mod+Shift+/)

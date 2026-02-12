@@ -8,7 +8,7 @@
 
         programs.noctalia-shell = {
                 enable = true;
-                systemd.enable = false;
+                systemd.enable = true;
 
                 # Declarative configuration using the module's settings option.
                 # This ensures the configuration is managed by Nix and not overwritten manually.
