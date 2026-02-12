@@ -3,31 +3,36 @@
 	# ========================================================================
 	# FASTFETCH - Fast System Information Tool
 	# ========================================================================
-  
+	
 	programs.fastfetch = {
 		enable = true;
-    
+
 		settings = {
 			logo = {
-				type = "auto";
+				# Miasma Orange for NixOS Logo
 				color = {
-					"1" = "blue";
-					"2" = "white";
+					"1" = "38;2;187;119;68"; # #bb7744
+					"2" = "38;2;187;119;68"; # #bb7744
 				};
 			};
-      
+
 			display = {
-				separator = " → ";
+				separator = " ➜  ";
+				# Miasma Brown/Copper for Key Icons
 				color = {
-					keys = "blue";
-					title = "magenta";
+					keys = "38;2;179;109;67"; # #b36d43
+					title = "38;2;187;119;68"; # #bb7744 (Title Orange)
 				};
 			};
-      
+
 			modules = [
 				{
 					type = "title";
-					format = "{user-name}@{host-name}";
+					color = {
+						user = "38;2;187;119;68"; # Orange
+						at = "38;2;179;109;67";    # Brown
+						host = "38;2;187;119;68";  # Orange
+					};
 				}
 				{
 					type = "separator";
@@ -35,7 +40,7 @@
 				}
 				{
 					type = "os";
-					key = " OS";
+					key = " OS";
 				}
 				{
 					type = "host";
@@ -43,11 +48,11 @@
 				}
 				{
 					type = "kernel";
-					key = " Kernel";
+					key = " Kernel";
 				}
 				{
 					type = "uptime";
-					key = " Uptime";
+					key = "󰅐 Uptime";
 				}
 				{
 					type = "packages";
@@ -55,23 +60,23 @@
 				}
 				{
 					type = "shell";
-					key = " Shell";
+					key = " Shell";
 				}
 				{
 					type = "wm";
-					key = " WM";
+					key = " WM";
 				}
 				{
 					type = "terminal";
-					key = " Terminal";
+					key = " Terminal";
 				}
 				{
 					type = "terminalfont";
-					key = " Font";
+					key = " Font";
 				}
 				{
 					type = "cpu";
-					key = " CPU";
+					key = " CPU";
 				}
 				{
 					type = "gpu";
@@ -103,9 +108,4 @@
 			];
 		};
 	};
-  
-	# Remove macchina if it was previously installed
-	home.packages = lib.mkAfter [
-		pkgs.fastfetch
-	];
 }

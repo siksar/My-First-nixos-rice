@@ -298,7 +298,7 @@ in
 		// Noctalia Shell - delayed start to ensure Wayland socket is ready
 		// DISPLAY and GDK_BACKEND set in environment block above
 		spawn-at-startup "sh" "-c" "systemctl --user stop dunst mako swaync; pkill -f dunst; pkill -f mako; pkill -f swaync"
-		spawn-at-startup "sh" "-c" "sleep 3; noctalia-shell"
+		spawn-at-startup "sh" "-c" "noctalia-shell"
 
 		// ====================================================================
 		// HOTKEY OVERLAY (built-in which-key, Mod+Shift+/)
@@ -317,12 +317,11 @@ in
 				Mod+Return { spawn "kitty"; }
 				Mod+E { spawn "kitty" "-e" "yazi"; }
 				Mod+R { spawn "kitty" "-e" "nvim" "/"; }
-				Mod+B { spawn "brave"; }
+				// Mod+B { spawn "brave"; } // Reassigned to Session Menu
 				Mod+V { spawn "zen"; }
 
 				// ============================================================
-				// WLR-WHICH-KEY MENUS (VimJoyer style)
-				// One key to open a categorized menu overlay
+				// WLR-WHICH-KEY MENUS
 				// ============================================================
 				Mod+D { spawn "${lib.getExe appMenu}"; }
 				Mod+O { spawn "${lib.getExe fileMenu}"; }
@@ -335,9 +334,14 @@ in
 				Mod+Escape { spawn "${lib.getExe powerMenu}"; }
 
 				// ============================================================
-				// NOCTALIA INTEGRATION (Direct shortcuts)
+				// NOCTALIA / CUSTOM INTEGRATIONS
 				// ============================================================
+				// Clipboard (in Launcher)
 				Mod+Z { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
+				
+				// Session Menu (in Control Center)
+				Mod+B { spawn "noctalia-shell" "ipc" "call" "controlCenter" "toggle"; }
+				
 				Mod+Tab { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
 				Mod+X { spawn "noctalia-shell" "ipc" "call" "controlCenter" "toggle"; }
 

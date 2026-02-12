@@ -23,7 +23,7 @@
 		./modules/packages.nix
 		./modules/zapret.nix
 		./modules/power-management.nix
-		./modules/power-efficiency.nix    # TLP & thermal management
+		# ./modules/power-efficiency.nix    # TLP & thermal management (Disabled in favor of PPD)
 		./wrapped-programs/prism.nix
 	];
 

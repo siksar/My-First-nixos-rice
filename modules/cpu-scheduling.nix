@@ -24,7 +24,7 @@ in
 	environment.systemPackages = [ withCores ];
 
 	services.auto-cpufreq = {
-		enable = true;
+		enable = false; # Disabled in favor of PPD
 		settings = {
 			charger = {
 				governor = "performance";
@@ -46,7 +46,7 @@ in
 		};
 	};
 
-	services.power-profiles-daemon.enable = false;
+	# services.power-profiles-daemon.enable = false; # Removed to allow PPD from power-management.nix
 	services.tlp.enable = lib.mkForce false;
 	services.thermald.enable = true;
 

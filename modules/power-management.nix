@@ -25,7 +25,7 @@
 		powertop
     
 		# auto-cpufreq - Automatic CPU power management for laptops
-		# auto-cpufreq
+		# auto-cpufreq (Disabled in favor of PPD)
     
 		# s-tui - Terminal UI for monitoring CPU temp, freq, power
 		s-tui
@@ -347,7 +347,19 @@
 	# ========================================================================
 	# POWER PROFILES DAEMON
 	# ========================================================================
-	services.power-profiles-daemon.enable = false;
+	# ========================================================================
+	# POWER PROFILES DAEMON
+	# ========================================================================
+	services.power-profiles-daemon.enable = true;
+	
+	# ========================================================================
+	# UPOWER - Battery Reporting
+	# ========================================================================
+	services.upower.enable = true;
+
+	# Explicitly disable conflicting services
+	services.tlp.enable = false;
+	services.auto-cpufreq.enable = false;
 	# Accelerometer vb. sensörler
 
 	# ========================================================================

@@ -43,7 +43,7 @@
 			# ====================================================================
 			# MIASMA THEME (Hardcoded)
 			# ====================================================================
-			foreground = "#c2c2b0";
+			foreground = "#bb7744"; # Miasma Orange (Normal Text)
 			background = "#222222";
 			selection_foreground = "#000000";
 			selection_background = "#e5c47b";
@@ -61,25 +61,25 @@
 			inactive_tab_foreground = "#c2c2b0";
 			inactive_tab_background = "#2a2a2a";
       
-			# Normal colors
-			color0 = "#000000";
-			color1 = "#685742";
-			color2 = "#5f875f";
-			color3 = "#b36d43";
-			color4 = "#78824b";
-			color5 = "#bb7744";
-			color6 = "#c9a554";
-			color7 = "#d7c483";
+			# Normal colors (Warnings/Errors mapped to White per request)
+			color0 = "#000000";       # Black
+			color1 = "#c2c2b0";       # Red -> White (Error/Warn)
+			color2 = "#5f875f";       # Green (Success)
+			color3 = "#c2c2b0";       # Yellow -> White (Warning)
+			color4 = "#78824b";       # Blue
+			color5 = "#bb7744";       # Magenta (Secondary Orange)
+			color6 = "#c9a554";       # Cyan (Gold)
+			color7 = "#d7c483";       # White (Bright Gold)
       
-			# Bright colors
-			color8 = "#666666";
-			color9 = "#8a6f5c";
-			color10 = "#7aa37a";
-			color11 = "#d08f5f";
-			color12 = "#95a064";
-			color13 = "#d89a66";
-			color14 = "#e0c080";
-			color15 = "#f0e0b0";
+			# Bright colors (Warnings/Errors mapped to White per request)
+			color8 = "#666666";       # Grey
+			color9 = "#c2c2b0";       # Bright Red -> White
+			color10 = "#7aa37a";      # Bright Green
+			color11 = "#c2c2b0";      # Bright Yellow -> White
+			color12 = "#95a064";      # Bright Blue
+			color13 = "#d89a66";      # Bright Magenta
+			color14 = "#e0c080";      # Bright Cyan
+			color15 = "#f0e0b0";      # Bright White
 		};
     
 		keybindings = {
