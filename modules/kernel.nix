@@ -110,7 +110,7 @@
 	# ============================================================================
 	powerManagement = {
 		enable = true;
-		cpuFreqGovernor = "schedutil";
+		cpuFreqGovernor = "powersave";
 		powertop.enable = true;
 	};
 

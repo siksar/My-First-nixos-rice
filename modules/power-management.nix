@@ -180,7 +180,7 @@
 			# Strategy: Maximize Frequency at that 30W limit (Undervolt/Overclock).
 
 			apply_gaming() {
-					echo "Applying GAMING mode (30W Optimized)..."
+					echo "Applying GAMING mode (Cooler Optimization)..."
 					set_profile "performance"
 					set_epp "performance"
           
@@ -189,9 +189,9 @@
 					# +100 Core, +300 Memory - Safe boost
 					apply_gpu_clocks 100 300
           
-					# CPU: High Performance
-					# Lower tctl slightly to keep heat down since GPU fan curve might be linked
-					ryzenadj --stapm-limit=45000 --fast-limit=50000 --slow-limit=45000 --tctl-temp=85
+					# CPU: High Performance but Heat Restricted
+					# Reduced limits: 35W Sustained (was 45W), 80C Temp Limit (was 85C)
+					ryzenadj --stapm-limit=35000 --fast-limit=40000 --slow-limit=35000 --tctl-temp=80
 					# AMD P-State active mode prefers 'powersave' governor with 'performance' EPP
 					cpupower frequency-set -g powersave
 			}
@@ -227,7 +227,7 @@
 			}
 
 			apply_normal() {
-					echo "Applying NORMAL mode..."
+					echo "Applying NORMAL mode (Heat Optimized)..."
 					set_profile "balanced"
 					set_epp "balance_performance"
           
@@ -235,8 +235,10 @@
 					nvidia-smi -pl 30
 					apply_gpu_clocks 0 0
           
-					# CPU: Balanced
-					ryzenadj --stapm-limit=35000 --fast-limit=40000 --slow-limit=35000 --tctl-temp=85
+					# CPU: Balanced & Cool
+					# Reduced limits: 25W Sustained (was 35W), 70C Temp Limit (was 85C)
+					# This directly addresses the 'lower panel heating' issue
+					ryzenadj --stapm-limit=25000 --fast-limit=30000 --slow-limit=25000 --tctl-temp=70
 					cpupower frequency-set -g powersave
 			}
 
