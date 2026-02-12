@@ -1,117 +1,107 @@
 { config, pkgs, lib, ... }:
 
 {
-	# ============================================================================
-	# DEFAULT KERNEL - Ryzen-SMU (Zen Kernel)
-	# ============================================================================
-	boot.kernelPackages = pkgs.linuxPackages_zen;
+	# ========================================================================
+	# KERNEL PACKAGES - Bleeding Edge (Linux 6.19+)
+	# ========================================================================
+	# Using the latest stable kernel for best hardware support on Ryzen AI 9 HX 370.
+	# This ensures support for NPU (XDNA 2), WiFi 7, and latest power management.
+	boot.kernelPackages = pkgs.linuxPackages_latest;
 
-	# ============================================================================
+	# ========================================================================
 	# KERNEL MODULES
-	# ============================================================================
-	boot.kernelModules = [
+	# ========================================================================
+	boot.kernelModules = [ 
 		"kvm-amd"
 		"acpi_call"
-		"amdxdna"
+		"amdxdna"          # NPU support
 		"zram"
-		"ryzen_smu"
-		"msr"           # MSR erişimi - RyzenAdj için gerekli
 	];
 
-	# ryzen_smu hardware option
-	hardware.cpu.amd.ryzen-smu.enable = true;
-
-	boot.initrd.kernelModules = [
+	# Essential modules for early boot
+	boot.initrd.kernelModules = [ 
 		"amdgpu"
 		"nvme"
 		"zram"
 	];
 
-	boot.extraModulePackages = with config.boot.kernelPackages; [
+	# Extra module packages
+	boot.extraModulePackages = with config.boot.kernelPackages; [ 
 		acpi_call
-		ryzen-smu
 	];
 
-	# ============================================================================
-	# KERNEL PARAMETERS
-	# ============================================================================
+	# ========================================================================
+	# KERNEL PARAMETERS - Performance & Compatibility
+	# ========================================================================
 	boot.kernelParams = [
+		# CPU Power & Scheduling (amd-pstate-epp is default in recent kernels)
 		"amd_pstate=active"
 		"amd_prefcore=enable"
+
+		# Hardware Support
 		"amd_iommu=on"
 		"iommu=pt"
-		"processor.max_cstate=9"
-		"pcie_aspm=powersave"
-		"usbcore.autosuspend=-1"
+		"amdxdna.enable=1"                  # Enable NPU
+
+		# Graphics & Display (Hybrid Graphics: AMD + NVIDIA)
+		"amdgpu.sg_display=0"               # Fixes some flickering on iGPU
+		"amdgpu.ppfeaturemask=0xffffffff"   # Unlock full GPU features
+		"nvidia-drm.modeset=1"              # REQUIRED for Wayland on NVIDIA
+		"nvidia-drm.fbdev=1"                # Framebuffer device for high-res console
+
+		# Power Saving Latency Optimization
 		"nvme_core.default_ps_max_latency_us=0"
-		"amdgpu.sg_display=0"
-		"amdgpu.ppfeaturemask=0xffffffff" # AMD Overdrive/OC support
-		"nvidia-drm.modeset=1"
-		"nvidia-drm.fbdev=1"
+		"pcie_aspm=powersave"
+		"usbcore.autosuspend=-1"            # Prevent USB device disconnects
+
+		# System Stability & Debugging
 		"quiet"
 		"splash"
 		"loglevel=3"
 		"nowatchdog"
 		"nmi_watchdog=0"
-		"amdxdna.enable=1"
 	];
 
-	# ============================================================================
-	# BLACKLIST
-	# ============================================================================
-	boot.blacklistedKernelModules = [
+	# ========================================================================
+	# BLACKLIST - Remove Unwanted Modules
+	# ========================================================================
+	boot.blacklistedKernelModules = [ 
 		"iTCO_wdt"
 		"softdog"
-		"intel_idle"
-		"intel_pstate"
-		"pcspkr"
+		"intel_idle"       # AMD CPU -> No Intel Idle needed
+		"intel_pstate"     # AMD CPU -> No Intel P-State needed
+		"pcspkr"           # Silence PC speaker beep
+		"nouveau"          # Blacklist open-source NVIDIA to prevent conflicts
 	];
 
-	# ============================================================================
-	# MODPROBE
-	# ============================================================================
-	# ============================================================================
-	# MODPROBE
-	# ============================================================================
+	# ========================================================================
+	# MODPROBE CONFIGURATION
+	# ========================================================================
 	boot.extraModprobeConfig = ''
 		options amd_pstate mode=active
 		options amdgpu dc=1 dpm=1
 		options nvme default_ps_max_latency_us=0
 		options zram num_devices=1
-		# Krackan/Strix Point support attempt (Zen 5 = Family 26/1Ah)
-		options ryzen_smu monitor_cpu_temp=1 force_cpu_family=26
 	'';
 
-	# ============================================================================
-	# RYZEN-MONITOR-NG (sadece bu kernel'de)
-	# ============================================================================
-	environment.systemPackages = [
-		pkgs.ryzen-monitor-ng
+	# ========================================================================
+	# SYSTEM PACKAGES - Kernel Specific
+	# ========================================================================
+	environment.systemPackages = with pkgs; [
+		# Essential tools for monitoring kernel performance
+		linuxPackages_latest.cpupower
+		lm_sensors
+		powertop
+		nvtopPackages.full    # GPU monitoring
 	];
 
-	# ============================================================================
-	# SPECIALISATION - Linux Latest (Fallback)
-	# ============================================================================
-	specialisation = {
-		latest-kernel.configuration = {
-			system.nixos.tags = [ "latest" ];
-			boot.kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
-			boot.kernelParams = lib.mkForce [
-				"quiet"
-				"amd_pstate=active"
-				"nowatchdog"
-			];
-			environment.systemPackages = lib.mkForce [];
-		};
-	};
-
-	# ============================================================================
-	# POWER & ZRAM
-	# ============================================================================
+	# ========================================================================
+	# POWER MANAGEMENT & ZRAM
+	# ========================================================================
 	powerManagement = {
 		enable = true;
-		cpuFreqGovernor = "powersave";
-		powertop.enable = true;
+		cpuFreqGovernor = "performance";  # Default to performance, allow userspace tools to manage
+		powertop.enable = false;          # Disable auto-tune to avoid conflicts with custom scripts
 	};
 
 	zramSwap = {
@@ -120,22 +110,31 @@
 		memoryPercent = 50;
 	};
 
-	# ============================================================================
-	# SYSCTL
-	# ============================================================================
+	# ========================================================================
+	# SYSCTL TUNING - Throughput & Latency
+	# ========================================================================
 	boot.kernel.sysctl = {
-		"vm.swappiness" = 60;
+		# Virtual Memory
+		"vm.swappiness" = 10;             # Reduce swap usage (32GB RAM is plenty)
 		"vm.dirty_ratio" = 10;
+		"vm.dirty_background_ratio" = 5;
 		"vm.vfs_cache_pressure" = 50;
-		"kernel.nmi_watchdog" = 0;
+
+		# Networking (BBR Congestion Control)
+		"net.core.default_qdisc" = "cake";
 		"net.ipv4.tcp_congestion_control" = "bbr";
+
+		# Watchdog
+		"kernel.nmi_watchdog" = 0;
+
+		# Filesystem Monitoring
 		"fs.inotify.max_user_watches" = 524288;
 	};
 
-	# ============================================================================
-	# HARDWARE
-	# ============================================================================
- # hardware.cpu.amd.updateMicrocode = true;
+	# ========================================================================
+	# FIRMWARE
+	# ========================================================================
 	hardware.enableRedistributableFirmware = true;
 	hardware.enableAllFirmware = true;
+	hardware.cpu.amd.updateMicrocode = true;
 }

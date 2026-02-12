@@ -6,55 +6,83 @@
 
 	nixpkgs.config.allowUnfree = true;
 	environment.systemPackages = with pkgs; [
-		# Core utilities
-		helix # Rust based editor (Neovim replacement)
+		# ====================================================================
+		# CORE UTILITIES - RUST BASED
+		# ====================================================================
+		helix        # Modern modal editor (Rust)
+		bottom       # System monitor (Rust)
+		bat          # Cat clone with syntax highlighting (Rust)
+		eza          # Ls clone (Rust)
+		fd           # Find clone (Rust)
+		ripgrep      # Grep clone (Rust)
+		zoxide       # Cd clone (Rust)
+		starship     # Shell prompt (Rust)
+		yazi         # File manager (Rust)
+		
+		# ====================================================================
+		# RUST DEVELOPMENT ENVIRONMENT
+		# ====================================================================
+		rustc
+		cargo
+		rust-analyzer
+		clippy
+		rustfmt
+		
+		# Build Dependencies for Rust Crates
+		gcc          # Linker
+		pkg-config
+		openssl
+		gnumake
+		cmake
+		clang
+
+		# ====================================================================
+		# SYSTEM & HARDWARE
+		# ====================================================================
 		wget
 		git
-		fastfetch # Fast system information tool
-		bottom # Rust based monitor (Btop replacement)
-
-		nvtopPackages.full # AMD + NVIDIA desteği için full paket
-		lact # AMD GPU kontrol (gaming.nix'ten taşındı)
+		fastfetch
+		nvtopPackages.full
+		lact
 		antigravity
-		vscode
-
-
-		# Hardware Diagnostics
 		nvme-cli
 		smartmontools
+		appimage-run
+		
+		# ====================================================================
+		# APPLICATIONS & AI
+		# ====================================================================
+		vscode
 		claude-code
-		# Browser & Productivity
 		bitwarden-desktop
 		home-manager
 		bottles
-		# AI Tools
 		lmstudio
 		localsend
 		wine
 		winetricks
 		dxvk
 		vkd3d
-
-		# Gaming Launchers
-		prismlauncher # Minecraft launcher with mod support
-		heroic # Epic Games & GOG launcher
-
-		# Music Applications
-		ytmdesktop # YouTube Music desktop client
-		# mpv is required for ytui-music and is generally useful
+		ytmdesktop
 		mpv
 		yt-dlp
-
-		# AppImage support
-		appimage-run
-		# Development tools
+		
+		# ====================================================================
+		# GAMING TOOLS
+		# ====================================================================
+		prismlauncher
+		heroic
+		protonup-qt
+		mangohud
+		gamescope
+		
+		# ====================================================================
+		# CONTAINERS & THEMES
+		# ====================================================================
 		docker
+		docker-compose
 		gruvbox-gtk-theme
 		gruvbox-dark-icons-gtk
-		docker-compose
-		protonup-qt # Proton version manager (GE-Proton installation)
-		mangohud # FPS counter & limiter/unlimiter
-		gamescope # Wayland compositor for gaming (useful for fix resolution/refresh rate)
 	];
 	# AppImage binfmt registration
 	boot.binfmt.registrations.appimage = {
