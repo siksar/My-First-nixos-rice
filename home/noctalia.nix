@@ -19,7 +19,7 @@
 	xdg.configFile."noctalia/settings.json" = {
 		force = true;
 		text = builtins.toJSON {
-			settingsVersion = 0; # Set to 0 to match default settings version
+			settingsVersion = 100; # Set to 100 to prevent migration (future-proof)
 
 			# ==================================================================
 			# BAR CONFIGURATION
