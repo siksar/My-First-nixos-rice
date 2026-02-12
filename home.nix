@@ -7,7 +7,7 @@
 	imports = [
 		./home/hyprland.nix
 		./home/noctalia.nix
-		# ./home/caelstia-shell.nix
+
 		./home/starship.nix
 		./home/editors.nix
 		# ./home/hyprlock.nix # Replaced by Caelstia Lock
