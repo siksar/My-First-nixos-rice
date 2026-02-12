@@ -288,4 +288,35 @@
 			};
 		};
 	};
+
+	# ========================================================================
+	# WRAPPER SCRIPT
+	# ========================================================================
+	# Copies read-only declarative config to a writable runtime location
+	# to satisfy Noctalia's need for write access while maintaining
+	# declarative source of truth.
+	home.file.".local/bin/noctalia-startup" = {
+		executable = true;
+		text = ''
+			#!/usr/bin/env bash
+			
+			# Paths
+			CONFIG_SRC="$HOME/.config/noctalia/settings.json"
+			CACHE_DIR="$HOME/.cache/noctalia"
+			RUNTIME_CONF="$CACHE_DIR/settings-runtime.json"
+			
+			# Ensure cache directory exists
+			mkdir -p "$CACHE_DIR"
+			
+			# Copy declarative config to runtime location with write permissions
+			if [ -f "$CONFIG_SRC" ]; then
+				cp -f "$CONFIG_SRC" "$RUNTIME_CONF"
+				chmod 644 "$RUNTIME_CONF"
+			fi
+			
+			# Launch Noctalia with custom settings file
+			export NOCTALIA_SETTINGS_FILE="$RUNTIME_CONF"
+			exec noctalia-shell
+		'';
+	};
 }
