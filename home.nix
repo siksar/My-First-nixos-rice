@@ -32,6 +32,8 @@
 	stylix.targets.bat.enable = false;
 	stylix.targets.nushell.enable = false;
 	stylix.targets.yazi.enable = false;
+	stylix.targets.helix.enable = false;
+	stylix.targets.neovim.enable = false;
 
 	# ========================================================================
 	# HOME MANAGER BASE
