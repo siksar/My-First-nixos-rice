@@ -19,7 +19,7 @@ in
 	inherit pkgs;
   
 	# Import configuration.nix for direct access
-	configuration = import ./configuration.nix {
+	configuration = import ./base/configuration.nix {
 		inherit pkgs;
 		config = {};
 		lib = pkgs.lib;

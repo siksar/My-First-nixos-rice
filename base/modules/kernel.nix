@@ -2,10 +2,9 @@
 
 {
 	# ========================================================================
-	# KERNEL PACKAGES - Bleeding Edge (Linux 6.19+)
+	# KERNEL PACKAGES - Latest
 	# ========================================================================
-	# Using the latest stable kernel for best hardware support on Ryzen AI 9 HX 370.
-	# This ensures support for NPU (XDNA 2), WiFi 7, and latest power management.
+	# linuxPackages_latest kullanılıyor — en güncel çekirdek.
 	boot.kernelPackages = pkgs.linuxPackages_latest;
 
 	# ========================================================================
@@ -16,6 +15,7 @@
 		"acpi_call"
 		"amdxdna"          # NPU support
 		"amd-pmf"          # Platform Management Framework
+		"gigabyte-wmi"     # Gigabyte sensor/WMI support
 		"zram"
 	];
 
@@ -74,6 +74,8 @@
 		"intel_pstate"     # AMD CPU -> No Intel P-State needed
 		"pcspkr"           # Silence PC speaker beep
 		"nouveau"          # Blacklist open-source NVIDIA to prevent conflicts
+		"asus-wmi"         # Prevent conflict with AMD PMF on Gigabyte laptops
+		"asus_wmi"
 	];
 
 	# ========================================================================
@@ -84,6 +86,8 @@
 		options amdgpu dc=1 dpm=1
 		options nvme default_ps_max_latency_us=0
 		options zram num_devices=1
+		install asus-wmi /bin/false
+		install asus_wmi /bin/false
 	'';
 
 	# ========================================================================
@@ -91,7 +95,7 @@
 	# ========================================================================
 	environment.systemPackages = with pkgs; [
 		# Essential tools for monitoring kernel performance
-		linuxPackages_latest.cpupower
+		config.boot.kernelPackages.cpupower
 		lm_sensors
 		powertop
 		nvtopPackages.full    # GPU monitoring

@@ -17,8 +17,10 @@ let
 				# CPU governor
 				echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor 2>/dev/null
         
-				# Disable CPU boost limit
-				echo 0 | tee /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null || true
+				# AMD boost - no intel_pstate on this system
+				if [ -f /sys/devices/system/cpu/cpufreq/boost ]; then
+					echo 1 | tee /sys/devices/system/cpu/cpufreq/boost 2>/dev/null || true
+				fi
         
 				# GPU performance
 				echo high | tee /sys/class/drm/card*/device/power_dpm_force_performance_level 2>/dev/null || true
@@ -244,6 +246,8 @@ in
 			general = {
 				renice = 10;
 				screensaver_inhibit = true;
+				softrealtime = "auto";
+				inhibit_screensaver = 0;
 				defaultgov = "performance";
 				desiredgov = "performance";
 			};
@@ -258,7 +262,11 @@ in
 			cpu = {
 				pin_cores = "no";  # Let scheduler handle heterogeneous cores
 			};
-      
+
+			custom = {
+				start = "notify-send 'GameMode' '🎮 Optimizations activated'";
+				end = "notify-send 'GameMode' '🛑 Optimizations deactivated'";
+			};
 		};
 	};
 

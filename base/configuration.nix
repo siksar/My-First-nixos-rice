@@ -23,8 +23,8 @@
 		./modules/zapret.nix
 		./modules/power-management.nix
 		./modules/virtualisation.nix
-		# ./modules/power-efficiency.nix    # TLP & thermal management (Disabled in favor of PPD)
-		./wrapped-programs/prism.nix
+		./modules/stylix.nix              # Miasma Orange theming
+		../wrapped-programs/prism.nix
 	];
 
 	# ========================================================================
@@ -49,7 +49,7 @@
 		# Plymouth for smooth boot
 		plymouth = {
 			enable = true;
-			theme = "breeze";
+			theme = lib.mkDefault "breeze"; # Stylix overrides this
 		};
 	};
   
@@ -236,7 +236,7 @@
 		};
     
 		gc = {
-			automatic = true;
+			automatic = false; # Handled by programs.nh.clean
 			dates = "weekly";
 			options = "--delete-older-than 14d";
 			persistent = true;
@@ -268,6 +268,16 @@
 	};
   
 	programs.dconf.enable = true;
+
+	# ========================================================================
+	# NH - NixOS Helper
+	# ========================================================================
+	programs.nh = {
+		enable = true;
+		clean.enable = true;
+		clean.extraArgs = "--keep-since 14d --keep 5";
+		flake = "/home/zixar/dotfiles";
+	};
 
 	# ========================================================================
 	# SYSTEM STATE

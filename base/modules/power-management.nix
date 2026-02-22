@@ -30,7 +30,7 @@
 		stress-ng
     
 		# cpupower - CPU frequency scaling utilities
-		linuxPackages_latest.cpupower
+		config.boot.kernelPackages.cpupower
     
 		# ─────────────────────────────────────────────────────────────────────
 		# GPU & DISPLAY CONTROL
@@ -98,7 +98,7 @@
 		iotop
     
 		# perf - Linux performance tools
-		linuxPackages_latest.perf
+		perf
     
 		# pciutils - lspci command for hardware inspection
 		pciutils
@@ -119,190 +119,185 @@
 		(pkgs.writeShellScriptBin "power-control" ''
 			#!/usr/bin/env bash
 
-			# Power Control Script - AMD-PMF Edition
-			# Optimized for: Gigabyte Aero X16 (Ryzen AI 7 350 + RTX 5060)
-			# Strategy: Trust AMD-PMF for Platform (CPU/Fan) but force NVIDIA for GPU.
-      
-			# Display & Authority setup for nvidia-settings
-			export DISPLAY=:0
-			
-			# Robust XAUTHORITY detection for Wayland/GDM/SDDM
-			# We need to find the Xauthority file owned by the user to allow root to talk to X/Xwayland
-			detect_xauth() {
-				local USER_UID=$(id -u zixar)
-				# 1. Standard home location
-				if [ -f "/home/zixar/.Xauthority" ]; then
-					echo "/home/zixar/.Xauthority"
-					return
-				fi
-				
-				# 2. Search in /run/user/UID (GDM, Wayland often puts it here)
-				# Look for files starting with .mutter, .Xauth, or just xauth
-				for candidate in $(find /run/user/$USER_UID -maxdepth 2 -name "*auth*" 2>/dev/null); do
-					if [ -f "$candidate" ]; then
-						echo "$candidate"
-						return
-					fi
-				done
-			}
-
-			XAUTH_FILE=$(detect_xauth)
-			if [ -n "$XAUTH_FILE" ]; then
-				export XAUTHORITY="$XAUTH_FILE"
-			else
-				echo "⚠ Warning: Could not find XAUTHORITY file. Nvidia settings might fail."
-			fi
+			# ========================================================================
+			# POWER CONTROL SCRIPT - KRAKEN POINT EDITION
+			# ========================================================================
+			# TARGET HARDWARE:
+			#   CPU: AMD Ryzen AI 7 350 (Kraken Point: Zen 5 + Zen 5c)
+			#   GPU: NVIDIA RTX 5060 Max-Q
+			#   POWER: 100W PD (Power Delivery) Limited
+			#
+			# STRATEGY:
+			#   1. CPU (amd-pstate): Use EPP via sysfs. Ideally 'balance_performance' 
+			#      for 100W budget to leave headroom for GPU.
+			#   2. GPU (nvidia): Use `nvidia-smi -lgc` (Lock Graphics Clock) instead of 
+			#      power limits (-pl) where possible, as it's more stable on mobile.
+			#      Limits are tuned to stay under 100W total system draw.
+			#   3. Platform (amd-pmf): Set platform_profile if available.
+			#
+			# ------------------------------------------------------------------------
 
 			check_root() {
-					if [ "$EUID" -ne 0 ]; then
-							echo "Please run as root"
-							exit 1
-					fi
+				if [ "$EUID" -ne 0 ]; then
+					echo "Please run as root"
+					exit 1
+				fi
 			}
 
-			# Check if AMD PMF is active
-			check_pmf() {
-				if [ -d "/sys/devices/platform/amd-pmf" ]; then
-					echo "✔ AMD PMF Driver Loaded"
+			# --- HELPERS ---
+
+			set_platform_profile() {
+				# AMD PMF / ACPI Platform Profile
+				# performance, balanced, low-power
+				PROFILE=$1
+				if [ -f /sys/firmware/acpi/platform_profile ]; then
+					echo "$PROFILE" > /sys/firmware/acpi/platform_profile 2>/dev/null || true
+					echo "  • Platform Profile: ''${PROFILE}"
+				fi
+			}
+
+			set_cpu_epp() {
+				# AMD P-State EPP (Energy Performance Preference)
+				# performance, balance_performance, balance_power, power
+				EPP=$1
+				if [ -f /sys/devices/system/cpu/cpu0/cpufreq/energy_performance_preference ]; then
+					echo "$EPP" | tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference > /dev/null
+					echo "  • CPU EPP: ''${EPP}"
+				fi
+			}
+
+			set_cpu_gov() {
+				# CPU Governor (amd-pstate usually defaults to powersave, but performance is valid too)
+				GOV=$1
+				cpupower frequency-set -g "$GOV" >/dev/null 2>&1 || true
+				echo "  • CPU Governor: ''${GOV}"
+			}
+
+			set_gpu_clocks() {
+				# NVIDIA Lock Graphics Clock (LGC) - X11 Independent!
+				# Usage: set_gpu_clocks <MinMHz> <MaxMHz>
+				MIN=$1
+				MAX=$2
+				
+				# Reset clocks first
+				if [ "$MIN" == "0" ]; then
+					nvidia-smi -rgc >/dev/null 2>&1
+					echo "  • GPU Clocks: Reset to Auto"
 				else
-					echo "⚠ AMD PMF Not Detected (Check Kernel)"
+					nvidia-smi -lgc "$MIN,$MAX" >/dev/null 2>&1
+					if [ $? -eq 0 ]; then
+						echo "  • GPU Clocks: Locked to ''${MAX} MHz"
+					else
+						echo "  ⚠ GPU Lock Failed (Not Supported?)"
+					fi
+				fi
+			}
+
+			set_gpu_power() {
+				# NVIDIA Power Limit (PL) in Watts
+				# Note: Max-Q often ignores this or has a narrow range (e.g. 35W-115W)
+				WATTS=$1
+				nvidia-smi -pl "$WATTS" >/dev/null 2>&1
+				if [ $? -eq 0 ]; then
+					echo "  • GPU Power Target: ''${WATTS}W"
+				else
+					echo "  ⚠ GPU Power Set Failed (Firmware Locked?)"
 				fi
 			}
 
-			set_profile() {
-					echo "Setting Platform Profile: $1..."
-					# This talks to amd-pmf driver via ACPI tables
-					if command -v powerprofilesctl &> /dev/null; then
-							powerprofilesctl set "$1" || true
-					elif [ -f /sys/firmware/acpi/platform_profile ]; then
-							echo "$1" > /sys/firmware/acpi/platform_profile || true
-					fi
+			# --- PROFILES ---
+
+			apply_pd_gaming() {
+				echo ">>> Applying PD-GAMING Profile (100W PD Optimized)"
+				echo "    Target: CPU ~25W | GPU ~45W | Sys ~20W"
+				
+				# 1. Platform: Balanced (Don't let CPU eat all power)
+				set_platform_profile "balanced"
+				
+				# 2. CPU: Efficient Gaming (Zen 5c effective)
+				set_cpu_epp "balance_performance"
+				set_cpu_gov "powersave" # Let P-State handle freq via EPP
+				
+				# 3. GPU: Sweet Spot Efficiency
+				# RTX 5060 mobile sweet spot is often 1950-2100 MHz @ ~45-50W
+				set_gpu_clocks 1900 2100
+				set_gpu_power 50
 			}
 
-			set_epp() {
-					# AMD P-State EPP Control (Works with PMF)
-					if [ -f /sys/devices/system/cpu/cpu0/cpufreq/energy_performance_preference ]; then
-							echo "Setting EPP: $1"
-							echo "$1" | tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference > /dev/null
-					fi
+			apply_pd_balanced() {
+				echo ">>> Applying PD-BALANCED Profile (Daily Use)"
+				echo "    Target: Quiet & Efficient"
+				
+				set_platform_profile "balanced"
+				set_cpu_epp "balance_power"
+				set_cpu_gov "powersave"
+				
+				# GPU: Low clock cap for UI/Video/Light Gaming
+				set_gpu_clocks 1200 1500
+				set_gpu_power 35
 			}
 
-			set_governor() {
-				# Smart governor selection
-				DESIRED=$1
-				# If schedutil requested but not available, fallback to powersave (amd-pstate default)
-				if [ "$DESIRED" = "schedutil" ]; then
-					if ! grep -q "schedutil" /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors 2>/dev/null; then
-						DESIRED="powersave"
-					fi
-				fi
-				echo "Setting CPU Governor: $DESIRED"
-				cpupower frequency-set -g "$DESIRED" >/dev/null 2>&1 || true
-			}
-
-			apply_gpu_clocks() {
-					CORE=$1
-					MEM=$2
-					echo "Applying GPU Clocks: Core +$CORE MHz, Mem +$MEM MHz..."
-					if command -v nvidia-settings &> /dev/null; then
-						 # Requires X server access
-						 echo "Debug: Using XAUTHORITY=$XAUTHORITY DISPLAY=$DISPLAY"
-						 nvidia-settings -a "[gpu:0]/GPUGraphicsClockOffset[3]=$CORE" \
-														 -a "[gpu:0]/GPUMemoryTransferRateOffset[3]=$MEM"
-						 if [ $? -ne 0 ]; then
-							 echo "⚠ Failed to apply GPU clocks (Check DISPLAY/XAUTHORITY or Wayland compatibility)"
-						 else
-							 echo "✔ GPU clocks applied"
-						 fi
-					fi
-			}
-
-			apply_gpu_power() {
-				LIMIT=$1
-				echo "Setting GPU Power Limit: $LIMIT W"
-				nvidia-smi -pl "$LIMIT" >/dev/null 2>&1
-				if [ $? -ne 0 ]; then
-					echo "⚠ Could not set power limit (Locked by firmware?)"
-				fi
-			}
-
-			# POWER MODES (AMD-PMF + NVIDIA Manual)
-
-			apply_gaming() {
-					echo "Applying GAMING mode (PMF Performance + 50W GPU)..."
-					check_pmf
-					
-					# 1. Platform: "Performance"
-					set_profile "performance"
-					set_epp "performance"
-          
-					# 2. GPU: 50W Limit (Manual Override)
-					apply_gpu_power 50
-					apply_gpu_clocks 150 400
-					
-					# 3. CPU Governor
-					set_governor "schedutil"
-			}
-
-			apply_turbo() {
-					echo "Applying TURBO mode (PMF Performance + 60W GPU)..."
-					check_pmf
-					set_profile "performance"
-					set_epp "performance"
-					apply_gpu_power 60
-					apply_gpu_clocks 180 600
-					set_governor "performance"
-			}
-
-			apply_extreme() {
-					echo "Applying EXTREME mode (Max Limits)..."
-					check_pmf
-					set_profile "performance"
-					set_epp "performance"
-					apply_gpu_power 80
-					apply_gpu_clocks 200 1000
-					set_governor "performance"
-			}
-
-			apply_normal() {
-					echo "Applying NORMAL mode (PMF Balanced)..."
-					check_pmf
-					set_profile "balanced"
-					set_epp "balance_performance"
-					apply_gpu_power 30
-					apply_gpu_clocks 0 0
-					set_governor "schedutil"
+			apply_ac_gaming() {
+				echo ">>> Applying AC-GAMING Profile (Max Performance)"
+				echo "    Target: Unleash everything (Battery ignored)"
+				
+				set_platform_profile "performance"
+				set_cpu_epp "performance"
+				set_cpu_gov "performance"
+				
+				# GPU: Max Boost
+				set_gpu_clocks 2200 2550
+				set_gpu_power 80 # Or Max TGP
 			}
 
 			apply_saver() {
-					echo "Applying SAVER mode (PMF Power-Saver)..."
-					check_pmf
-					set_profile "power-saver"
-					set_epp "power"
-					apply_gpu_power 25
-					apply_gpu_clocks 0 0
-					set_governor "powersave"
+				echo ">>> Applying SAVER Profile (Battery Life)"
+				
+				set_platform_profile "low-power"
+				set_cpu_epp "power"
+				set_cpu_gov "powersave"
+				
+				# GPU: Minimize
+				set_gpu_clocks 210 1200
+				set_gpu_power 25
 			}
+
+			apply_default() {
+				echo ">>> Reseting to Default"
+				nvidia-smi -rgc >/dev/null 2>&1
+				nvidia-smi -pm 0 >/dev/null 2>&1 # Disable persistence optional
+				set_platform_profile "balanced"
+				set_cpu_epp "balance_performance"
+			}
+
+			# --- MAIN ---
 
 			check_root
 			MODE=$1
+
 			case "$MODE" in
-					"gaming") apply_gaming ;;
-					"turbo") apply_turbo ;;
-					"extreme") apply_extreme ;;
-					"normal") apply_normal ;;
-					"saver"|"tasarruf") apply_saver ;;
-					"auto")
-							# Simply ask PPD what mode we are in (if PPD auto-switches)
-							CURRENT=$(powerprofilesctl get)
-							if [ "$CURRENT" = "performance" ]; then apply_gaming;
-							elif [ "$CURRENT" = "power-saver" ]; then apply_saver;
-							else apply_normal; fi
-							;;
-					*)
-							echo "Usage: $0 {gaming|turbo|extreme|normal|saver|auto}"
-							exit 1
-							;;
+				"pd-gaming") apply_pd_gaming ;;
+				"pd-balanced") apply_pd_balanced ;;
+				"gaming"|"ac-gaming"|"turbo") apply_ac_gaming ;;
+				"saver"|"eco") apply_saver ;;
+				"default"|"normal") apply_default ;;
+				"auto")
+					# Simple logic based on power source
+					STATUS=$(cat /sys/class/power_supply/AC/online 2>/dev/null || echo 1)
+					if [ "$STATUS" == "1" ]; then
+						apply_ac_gaming
+					else
+						apply_pd_balanced
+					fi
+					;;
+				*)
+					echo "Usage: power-control {pd-gaming|pd-balanced|ac-gaming|saver|default}"
+					echo "  pd-gaming   : Optimized for 100W USB-C PD (CPU+GPU balanced)"
+					echo "  pd-balanced : Daily use on PD"
+					echo "  ac-gaming   : Full power on barrel plug"
+					echo "  saver       : Max battery life"
+					exit 1
+					;;
 			esac
 		'')
     
@@ -434,7 +429,7 @@
 			groups = [ "wheel" ];
 			commands = [
 				{ command = "/run/current-system/sw/bin/power-control"; options = [ "NOPASSWD" ]; }
-				{ command = "${pkgs.linuxPackages_latest.cpupower}/bin/cpupower"; options = [ "NOPASSWD" ]; }
+				{ command = "${config.boot.kernelPackages.cpupower}/bin/cpupower"; options = [ "NOPASSWD" ]; }
 				# Note: nvidia-smi might need to be explicitly added if not covered
 			];
 		}

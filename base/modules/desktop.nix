@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 {
 	# ========================================================================
-	# DESKTOP ENVIRONMENT - Niri
+	# DESKTOP ENVIRONMENT - Hyprland
 	# ========================================================================
 	services = {
 		xserver = {
@@ -12,25 +12,25 @@
 		};
 	};
 	# ========================================================================
-	# NIRI WINDOW MANAGER (Rust Based)
+	# HYPRLAND WINDOW MANAGER
 	# ========================================================================
-	programs.niri = {
+	programs.hyprland = {
 		enable = true;
-		# Niri package from flake input will be used automatically via nixosModules.niri
+		xwayland.enable = true;
 	};
 	
 	# ========================================================================
-	# AUTO LOGIN (No Display Manager - Maximum Speed)
+	# AUTO LOGIN (GreetD → Hyprland)
 	# ========================================================================
 	services.greetd = {
 		enable = true;
 		settings = {
 			initial_session = {
-				command = "niri-session";
+				command = "Hyprland";
 				user = "zixar";
 			};
 			default_session = {
-				command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd niri-session";
+				command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd Hyprland";
 				user = "greeter";
 			};
 		};
@@ -52,9 +52,7 @@
 		papirus-icon-theme
 		pavucontrol
 		# Greeters
-		greetd.tuigreet
-		# Xwayland satellite for Niri X11 compatibility
-		xwayland-satellite
+		tuigreet
 	];
 	# ========================================================================
 	# DCONF & GTK INTEGRATION
@@ -66,16 +64,16 @@
 		XCURSOR_SIZE = "24";
 	};
 	# ========================================================================
-	# XDG PORTAL - Niri + GTK
+	# XDG PORTAL - Hyprland + GTK
 	# ========================================================================
 	xdg.portal = {
 		enable = true;
 		extraPortals = [
 			pkgs.xdg-desktop-portal-gtk
-			pkgs.xdg-desktop-portal-gnome
+			pkgs.xdg-desktop-portal-hyprland
 		];
 		config = {
-			niri.default = [ "gnome" "gtk" ];
+			hyprland.default = [ "hyprland" "gtk" ];
 			common.default = [ "gtk" ];
 		};
 	};

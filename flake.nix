@@ -1,5 +1,5 @@
 {
-	description = "Zixar's NixOS Configuration - Gigabyte Aero X16 Optimized";
+	description = "Zixar's NixOS Configuration - Gigabyte Aero X16 (Hyprland + Noctalia)";
 
 	inputs = {
 		nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -9,9 +9,9 @@
 			inputs.nixpkgs.follows = "nixpkgs";
 		};
 
-		# Noctalia Shell - Modern Wayland Desktop Shell
-		noctalia = {
-			url = "github:noctalia-dev/noctalia-shell";
+		# Stylix - System-wide theming framework
+		stylix = {
+			url = "github:danth/stylix";
 			inputs.nixpkgs.follows = "nixpkgs";
 		};
 
@@ -31,7 +31,7 @@
 		self,
 		nixpkgs,
 		home-manager,
-		noctalia,
+		stylix,
 		zen-browser,
 		nixos-hardware,
 		...
@@ -52,7 +52,6 @@
 		specialArgs = {
 			inherit
 				inputs
-				noctalia
 				zen-browser
 				nixos-hardware;
 		};
@@ -65,8 +64,11 @@
 				nixos-hardware.nixosModules.common-gpu-amd
 				nixos-hardware.nixosModules.common-pc-laptop-ssd
 
+				# Stylix system-wide theming
+				stylix.nixosModules.stylix
+
 				# Main configuration
-				./configuration.nix
+				./base/configuration.nix
 			];
 		};
 
@@ -74,6 +76,7 @@
 			inherit pkgs;
 			extraSpecialArgs = specialArgs;
 			modules = [
+				stylix.homeManagerModules.stylix
 				./home.nix
 			];
 		};

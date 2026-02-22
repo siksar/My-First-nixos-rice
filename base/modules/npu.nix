@@ -59,18 +59,18 @@ let
 in
 {
 	# AMD XDNA NPU SUPPORT - Strix Point
-	boot.kernelPatches = lib.mkAfter [
-		{
-			name = "amdxdna-config";
-			patch = null;
-			structuredExtraConfig = with lib.kernel; {
-				DRM_ACCEL = yes;
-				DRM_ACCEL_AMDXDNA = module;
-				AMD_IOMMU = yes;
-				IOMMU_SVA = yes;
-			};
-		}
-	];
+#	boot.kernelPatches = lib.mkAfter [
+#		{
+#			name = "amdxdna-config";
+#			patch = null;
+#			structuredExtraConfig = with lib.kernel; {
+#				DRM_ACCEL = yes;
+#				DRM_ACCEL_AMDXDNA = module;
+#				AMD_IOMMU = yes;
+#				IOMMU_SVA = yes;
+#			};
+#		}
+#	];
 
 	boot.kernelModules = [
 		"amdxdna"

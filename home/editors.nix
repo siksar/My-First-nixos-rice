@@ -134,7 +134,7 @@
 				style = "night",
 				transparent = true,
 				on_colors = function(colors)
-					-- Miasma Palette Override
+					-- Miasma Palette Override (Orange Focused)
 					colors.bg = "#222222"
 					colors.fg = "#c2c2b0"
 					colors.bg_dark = "#1a1a1a"
@@ -144,7 +144,7 @@
 					colors.bg_search = "#bb7744"
 					colors.bg_sidebar = "#222222"
 					colors.bg_statusline = "#222222"
-					colors.bg_visual = "#e5c47b"
+					colors.bg_visual = "#b36d43"
 					colors.border = "#666666"
 					colors.fg_dark = "#c2c2b0"
 					colors.fg_float = "#c2c2b0"

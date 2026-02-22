@@ -1,0 +1,30 @@
+--- a/kernel-open/nvidia-uvm/uvm_pmm_gpu.c
++++ b/kernel-open/nvidia-uvm/uvm_pmm_gpu.c
+@@ -3151,7 +3151,8 @@
+ }
+ 
+-static void device_coherent_page_free(struct page *page)
++static void device_coherent_page_free(struct folio *folio)
+ {
++    struct page *page = &folio->page;
+     unsigned long virt_addr = (unsigned long)page_to_virt(page);
+     uvm_pmm_gpu_t *pmm;
+     uvm_gpu_root_chunk_t *root_chunk;
+@@ -3161,13 +3162,14 @@
+ }
+ 
+-static void device_p2p_page_free(struct page *page)
++static void device_p2p_page_free(struct folio *folio)
+ {
++    struct page *page = &folio->page;
+ }
+ 
+ static const struct dev_pagemap_ops uvm_device_coherent_pgmap_ops = {
+-    .page_free = device_coherent_page_free,
++    .folio_free = device_coherent_page_free,
+ };
+ 
+ static const struct dev_pagemap_ops uvm_device_p2p_pgmap_ops = {
+-    .page_free = device_p2p_page_free,
++    .folio_free = device_p2p_page_free,
+ };
