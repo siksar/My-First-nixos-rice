@@ -157,27 +157,12 @@
 	};
 
 	# ========================================================================
-	# GTK THEME
+	# GTK/QT THEME - Managed by Stylix (modules/stylix.nix)
 	# ========================================================================
+	# Stylix handles: gtk.theme, gtk.iconTheme, gtk.cursorTheme, qt.*
+	# We only set dark mode preferences here.
 	gtk = {
 		enable = true;
-		theme = {
-			name = "adw-gtk3-dark";
-			package = pkgs.adw-gtk3;
-		};
-		iconTheme = {
-			name = "Papirus-Dark";
-			package = pkgs.papirus-icon-theme;
-		};
-		cursorTheme = {
-			name = "Adwaita";
-			package = pkgs.adwaita-icon-theme;
-			size = 24;
-		};
-		font = {
-			name = "Noto Sans";
-			size = 11;
-		};
 		gtk3.extraConfig = {
 			gtk-application-prefer-dark-theme = true;
 			gtk-enable-animations = true;
@@ -188,25 +173,7 @@
 		};
 	};
 
-	# ========================================================================
-	# QT THEME
-	# ========================================================================
-	qt = {
-		enable = true;
-		platformTheme.name = lib.mkDefault "gtk";
-		style.name = "adwaita-dark";
-	};
-
-	# ========================================================================
-	# CURSOR THEME
-	# ========================================================================
-	home.pointerCursor = {
-		name = "Adwaita";
-		package = pkgs.adwaita-icon-theme;
-		size = 24;
-		gtk.enable = true;
-		x11.enable = true;
-	};
+	# NOTE: Cursor theme managed by Stylix (base/modules/stylix.nix)
 
 	# ========================================================================
 	# PACKAGES
