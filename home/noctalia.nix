@@ -17,7 +17,7 @@
     # ========================================================================
     # 'colorize' ve 'colorKey' değerlerini korumak için doğrudan JSON modülünü 
     # kullanarak ayarları tanımlıyoruz. 
-    settings = {
+    settings = lib.mkForce {
       settingsVersion = 100;
 
       # ==================================================================
