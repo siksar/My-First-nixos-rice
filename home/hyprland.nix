@@ -148,8 +148,8 @@ in
 				gaps_in = 6;
 				gaps_out = 12;
 				border_size = 0;
-				"col.active_border" = "rgb(bb7744) rgb(c9a554) 45deg";   # 🟠 Miasma Orange/Gold
-				"col.inactive_border" = "rgb(222222)";
+				"col.active_border" = lib.mkForce "rgb(bb7744) rgb(c9a554) 45deg";   # 🟠 Miasma Orange/Gold
+				"col.inactive_border" = lib.mkForce "rgb(222222)";
 				layout = "dwindle";
 				allow_tearing = false;
 			};
@@ -172,7 +172,7 @@ in
 					enabled = true;
 					range = 12;
 					render_power = 3;
-					color = "rgba(bb774440)";   # 🟠 Miasma Orange tinted shadow
+					color = lib.mkForce "rgba(bb774440)";   # 🟠 Miasma Orange tinted shadow
 				};
 			};
 
