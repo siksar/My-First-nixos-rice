@@ -65,7 +65,6 @@
 
 			# Apps we configure manually — disable Stylix override
 			kitty.enable = false;      # Font/color managed in home/kitty.nix
-			hyprland.enable = false;   # Colors managed in home/hyprland.nix
 		};
 	};
 }
