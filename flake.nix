@@ -67,17 +67,18 @@
 				# Stylix system-wide theming
 				stylix.nixosModules.stylix
 
+				# Home Manager as NixOS module
+				home-manager.nixosModules.home-manager
+				{
+					home-manager.useGlobalPkgs = true;
+					home-manager.useUserPackages = true;
+					home-manager.extraSpecialArgs = specialArgs;
+					home-manager.users.zixar = import ./home.nix;
+					home-manager.backupFileExtension = "hm-backup";
+				}
+
 				# Main configuration
 				./base/configuration.nix
-			];
-		};
-
-		homeConfigurations."zixar" = home-manager.lib.homeManagerConfiguration {
-			inherit pkgs;
-			extraSpecialArgs = specialArgs;
-			modules = [
-				stylix.homeManagerModules.stylix
-				./home.nix
 			];
 		};
 
