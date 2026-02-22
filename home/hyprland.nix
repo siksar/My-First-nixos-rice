@@ -133,23 +133,8 @@ in
 				# OTHER KEYBINDINGS
 				"ALT, Shift_L, exec, hyprctl switchxkblayout all next"
 				"$mod, Tab, exec, noctalia-shell ipc call controlCenter toggle"
-			];
 
-			bindr = [
-				"$mod, SUPER_L, exec, noctalia-shell ipc call launcher toggle"
-			];
-
-			# Multimedia
-			binde = [
-				", XF86AudioRaiseVolume, exec, pamixer -i 5"
-				", XF86AudioLowerVolume, exec, pamixer -d 5"
-				", XF86AudioMute, exec, pamixer -t"
-				", XF86MonBrightnessUp, exec, brightnessctl s +5%"
-				", XF86MonBrightnessDown, exec, brightnessctl s 5%-"
-			];
-
-			# Workspaces
-			bind = [
+				# Workspaces
 				"$mod, 1, workspace, 1"
 				"$mod, 2, workspace, 2"
 				"$mod, 3, workspace, 3"
@@ -168,6 +153,26 @@ in
 				"$mod SHIFT, 7, movetoworkspace, 7"
 				"$mod SHIFT, 8, movetoworkspace, 8"
 				"$mod SHIFT, 9, movetoworkspace, 9"
+			];
+
+			bindr = [
+				"$mod, SUPER_L, exec, noctalia-shell ipc call launcher toggle"
+			];
+
+			# Multimedia
+			binde = [
+				", XF86AudioRaiseVolume, exec, pamixer -i 5"
+				", XF86AudioLowerVolume, exec, pamixer -d 5"
+				", XF86AudioMute, exec, pamixer -t"
+				", XF86MonBrightnessUp, exec, brightnessctl s +5%"
+				", XF86MonBrightnessDown, exec, brightnessctl s 5%-"
+			];
+
+			# Media keys
+			bindl = [
+				", XF86AudioPlay, exec, playerctl play-pause"
+				", XF86AudioNext, exec, playerctl next"
+				", XF86AudioPrev, exec, playerctl previous"
 			];
 
 			# Mouse
