@@ -6,7 +6,7 @@
 	# ========================================================================
 	imports = [
 		./home/hyprland.nix
-		./home/noctalia.nix
+		./home/quickshell.nix
 		./home/hyprpaper.nix
 
 		./home/starship.nix
@@ -279,6 +279,7 @@
     
 		# AI/ML
 		ollama
+		inputs.antigravity-nix.packages.${pkgs.system}.google-antigravity-no-fhs
 	] ++ lib.optionals (pkgs.stdenv.isx86_64) [
 		# x86_64 specific packages
 	];
@@ -333,9 +334,20 @@
 			source = ./scripts/wallpaper-cycle.sh;
 			executable = true;
 		};
-    
+
+		# Quickshell config (GreetD'de Quickshell oturumu seçildiğinde kullanılır)
+		".config/quickshell/main.qml".text = ''
+			// Quickshell minimal — dotfiles
+			// https://invent.kde.org/nickshanks/quickshell
+			import QtQuick
+			import Quickshell
+
+			Shell {
+			}
+		'';
+
 		# fastfetch config is in home/fastfetch.nix
-    
+
 		# Ollama config
 		".config/ollama/config.json".text = ''
 			{
@@ -364,8 +376,8 @@
 	programs.fzf = {
 		enable = true;
 		enableZshIntegration = false;
-		# enableNushellIntegration = true; # Not supported in current Home Manager
-		colors = {
+		# Stylix fzf target ile çakışmasın diye mkForce (gruvbox renkleri korunuyor)
+		colors = lib.mkForce {
 			"bg+" = "#3c3836";
 			"bg" = "#282828";
 			"spinner" = "#fb4934";
@@ -407,7 +419,8 @@
 	# ========================================================================
 	programs.bat = {
 		enable = true;
-		config = {
+		# Stylix bat target ile çakışmasın diye mkForce
+		config = lib.mkForce {
 			theme = "gruvbox-dark";
 			pager = "less -FR";
 			style = "numbers,changes,header";

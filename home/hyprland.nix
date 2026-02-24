@@ -36,9 +36,8 @@ let
 
 	# ⚡ Quick Menu (Mod+E)
 	quickMenu = mkMenu "quick" [
-		{ key = "q"; desc = " WiFi Settings"; cmd = "noctalia-shell ipc call network togglePanel"; }
-		{ key = "w"; desc = " Bluetooth Settings"; cmd = "noctalia-shell ipc call bluetooth togglePanel"; }
-		{ key = "e"; desc = " Volume Settings"; cmd = "noctalia-shell ipc call audio togglePanel"; }
+		{ key = "q"; desc = " QML Reload"; cmd = "quickshell -r"; }
+		{ key = "w"; desc = " Audio Settings"; cmd = "pavucontrol"; }
 	];
 
 	# 🎵 Media Menu (Mod+A)
@@ -111,7 +110,7 @@ in
 				"hyprpaper"
 				"wl-paste --type text --watch cliphist store"
 				"wl-paste --type image --watch cliphist store"
-				"noctalia-shell"
+				"quickshell"
 				"${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
 			];
 
@@ -131,7 +130,7 @@ in
 
 				# OTHER KEYBINDINGS
 				"ALT, Shift_L, exec, hyprctl switchxkblayout all next"
-				"$mod, Tab, exec, noctalia-shell ipc call controlCenter toggle"
+				"$mod, Tab, exec, quickshell -w ControlCenter"
 
 				# Workspaces
 				"$mod, 1, workspace, 1"
@@ -155,7 +154,7 @@ in
 			];
 
 			bindr = [
-				"$mod, SUPER_L, exec, noctalia-shell ipc call launcher toggle"
+				"$mod, SUPER_L, exec, killall rofi || rofi -show drun"
 			];
 
 			# Multimedia
