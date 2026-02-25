@@ -28,8 +28,8 @@
 			inputs.nixpkgs.follows = "nixpkgs";
 		};
 
-		noctalia-shell = {
-			url = "github:noctalia-dev/noctalia-shell";
+		caelstia = {
+			url = "github:caelestia-dots/shell";
 			inputs.nixpkgs.follows = "nixpkgs";
 		};
 	};
@@ -42,7 +42,7 @@
 		zen-browser,
 		nixos-hardware,
 		antigravity-nix,
-		noctalia-shell,
+		caelstia,
 		...
 	} @ inputs:
 	let
@@ -57,7 +57,7 @@
 		};
 
 		specialArgs = {
-			inherit inputs zen-browser nixos-hardware antigravity-nix noctalia-shell;
+			inherit inputs zen-browser nixos-hardware antigravity-nix caelstia;
 		};
 	in {
 		nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {

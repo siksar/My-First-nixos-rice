@@ -3,11 +3,11 @@
 	imports = [ ../base/modules/noctalia-home.nix ];
 
 	# ========================================================================
-	# NOCTALIA SHELL - Declarative Wayland Desktop Shell
+	# NOCTALIA SHELL - Disabled in favor of Caelstia
 	# ========================================================================
 	programs.noctalia-shell = {
-		enable = true;
-		systemd.enable = true;
+		enable = false;
+		systemd.enable = false;
 		package = inputs.noctalia-shell.packages.${pkgs.system}.default;
 		
 		settings = {
@@ -29,20 +29,60 @@
 			};
 
 			bar = {
-				status = {
-					showBattery = true;
-					showNetwork = true;
-					showBluetooth = true;
-					showAudio = true;
-					showLockStatus = true;
-				};
+				position = "left";
+				barType = "simple";
+				density = "comfortable";
+				showCapsule = false;
 				sizes = {
-					innerWidth = 28;
+					innerWidth = 64;
 					windowPreviewSize = 180;
 				};
 				flat = true;
 				padding = 2;
 				showOnHover = false;
+				
+				widgets = {
+					left = [
+						{ 
+							id = "ControlCenter"; 
+							useDistroLogo = true; 
+							enableColorization = true; 
+							colorizeSystemIcon = "primary"; 
+						}
+						{ 
+							id = "Workspace"; 
+							labelMode = "none";
+							emptyColor = "primary";
+							occupiedColor = "primary";
+							focusedColor = "primary";
+						}
+					];
+					center = [
+						{ id = "MediaMini"; textColor = "primary"; }
+						{ id = "Clock"; clockColor = "primary"; }
+						{ 
+							id = "NotificationHistory"; 
+							iconColor = "primary"; 
+							unreadBadgeColor = "primary"; 
+						}
+					];
+					right = [
+						{ 
+							id = "SystemMonitor"; 
+							iconColor = "primary"; 
+							textColor = "primary"; 
+						}
+						{ id = "Battery"; }
+					];
+				};
+			};
+
+			dock = {
+				dockType = "static";
+			};
+
+			location = {
+				name = "Erzurum";
 			};
 
 			general = {

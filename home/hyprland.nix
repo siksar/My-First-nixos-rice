@@ -124,6 +124,10 @@ in
 				"$mod, E, exec, ${lib.getExe quickMenu}"
 				"$mod, A, exec, ${lib.getExe mediaMenu}"
 
+				# Caelstia Shell Toggles
+				"$mod, Z, exec, caelestia-shell ipc call launcher toggle"
+				"$mod, X, exec, caelestia-shell ipc call controlCenter toggle"
+
 				# OTHER KEYBINDINGS
 				"ALT, Shift_L, exec, hyprctl switchxkblayout all next"
 
@@ -149,6 +153,7 @@ in
 			];
 
 			bindr = [
+				"SUPER, SUPER_L, exec, caelestia-shell ipc call launcher toggle"
 			];
 
 			# Multimedia

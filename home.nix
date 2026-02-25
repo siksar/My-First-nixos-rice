@@ -6,7 +6,7 @@
 	# ========================================================================
 	imports = [
 		./home/hyprland.nix
-		./home/noctalia-shell.nix
+		./home/caelstia-shell.nix
 		./home/hyprpaper.nix
 
 		./home/starship.nix
@@ -30,7 +30,7 @@
 		base16Scheme = ./stylix/miasma.yaml;
 		image = pkgs.fetchurl {
 			url = "https://raw.githubusercontent.com/NixOS/nixos-artwork/master/wallpapers/nix-wallpaper-dracula.png";
-			sha256 = "11p57bvv06m2p701dcvqckp8n1pnsf4psckp25wdb6smpms5h9s9";
+			sha256 = "sha256-SykeFJXCzkeaxw06np0QkJCK28e0k30PdY8ZDVcQnh4=";
 		};
 	};
 
@@ -192,6 +192,11 @@
 	home.packages = with pkgs; [
 		# Zen Browser (moved to home/zen.nix)
 		# inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
+		
+		# System Dependencies (Noctalia)
+		upower
+		networkmanagerapplet
+		bluez
     
 		# Rust Tools
 		procs
