@@ -127,7 +127,7 @@ in
 				# Caelstia Shell Toggles
 				"$mod, Z, exec, caelestia-shell ipc call launcher toggle"
 				"$mod, X, exec, caelestia-shell ipc call controlCenter toggle"
-				"$mod, W, exec, caelestia-shell ipc call wallpaper random"
+				"$mod SHIFT, W, exec, caelestia-shell ipc call wallpaper random"
 				"$mod, C, exec, caelestia-shell ipc call bluetooth togglePanel"
 				"$mod, V, exec, caelestia-shell ipc call sessionMenu show"
 
