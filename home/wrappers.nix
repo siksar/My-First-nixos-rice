@@ -1,43 +1,42 @@
-# ============================================================================
 # HOW TO CREATE WRAPPERS IN NIX
-# ============================================================================
-# User asked: "Bana wrapper ogretebilir misin? Bazi uygulamalar icin wrapper yapmam gerekebilir orn deezer gibi."
-#
-# A "wrapper" wraps a program to set environment variables or arguments before it runs.
-# In Nix, we use `makeWrapper`.
-#
-# Example Usage in configuration.nix or home.nix:
-#
-# environment.systemPackages = [
-#   (pkgs.symlinkJoin {
-#     name = "deezer-wrapped";
-#     paths = [ pkgs.deezer ];
-#     buildInputs = [ pkgs.makeWrapper ];
-#     postBuild = ''
-#       wrapProgram $out/bin/deezer \
-#         --set GDK_SCALE 2 \
-#         --add-flags "--enable-features=UseOzonePlatform --ozone-platform=wayland"
-#     '';
-#   })
-# ];
 
-# ============================================================================
 # SIMPLE SHELL SCRIPT METHOD (For quick fixes)
-# ============================================================================
-# You can also just make a script in bin:
 
 # #!/bin/sh
-# export ENV_VAR=value
-# exec /path/to/original/app "$@"
 
 { pkgs, ... }:
 {
 	# Example: Creating a wrapper for 'deezer' (if installed) to force Wayland
 	home.packages = [
+		(pkgs.writeShellScriptBin "nixos-safe-switch" ''
+			FLAKE_DIR="$HOME/dotfiles/flake"
+
+			echo "🚀 Attempting safe system switch..."
+			if nh os switch "$FLAKE_DIR"; then
+				echo "✅ System switched successfully!"
+			else
+				echo "⚠️ Switch failed! This might be due to a switch inhibitor (e.g., dbus-broker update)."
+				echo "🔄 Attempting a safe boot deployment instead..."
+				if nh os boot "$FLAKE_DIR"; then
+					echo "✅ Boot deployment successful!"
+					read -p "Mevcut oturumu korumak icin sistemi yeniden baslatmak ister misiniz? [e/H] " -n 1 -r
+					echo
+					if [[ $REPLY =~ ^[EeYy]$ ]]; then
+						echo "Rebooting..."
+						systemctl reboot
+					else
+						echo "Lütfen en kısa sürede sistemi yeniden başlatın!"
+					fi
+				else
+					echo "❌ Boot deployment also failed. Please check your configuration."
+					exit 1
+				fi
+			fi
+		'')
+
 		(pkgs.writeShellScriptBin "deezer-wayland" ''
 			# This is a simple wrapper script
 			export NIXOS_OZONE_WL=1
-			# Assuming 'deezer' is in your PATH (e.g. from Flatpak or other source if not in pkgs)
 			exec deezer --enable-features=UseOzonePlatform --ozone-platform=wayland "$@"
 		'')
 	];

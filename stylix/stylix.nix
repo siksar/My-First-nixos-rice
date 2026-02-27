@@ -1,5 +1,4 @@
 # Stylix theme: tek merkez — dotfiles/stylix/stylix.nix
-# Tüm tema yapılandırması bu dosyada; hedefler Stylix üzerinden yönetilir.
 { config, pkgs, ... }:
 {
 	stylix = {
@@ -44,9 +43,8 @@
 
 		targets = {
 			grub.enable = false;
-			plymouth.enable = true;
+			plymouth.enable = true; # Miasma dönen logo için Plymouth'u Styling'e bıraktık
 			gtk.enable = true;
-			kitty.enable = false;
 		};
 	};
 }

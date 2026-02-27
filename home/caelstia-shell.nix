@@ -1,35 +1,28 @@
 { config, pkgs, lib, caelstia, ... }:
 {
-	# ========================================================================
 	# CAELSTIA SHELL - Modern Wayland Desktop Shell
-	# ========================================================================
-	
+
 	imports = [ caelstia.homeManagerModules.default ];
-	
+
 	programs.caelestia = {
 		enable = true;
 		cli.enable = true;
-		
-		# ====================================================================
+
 		# SETTINGS (Imperative / GUI Managed)
-		# ====================================================================
-		# Leaving settings empty/minimal to allow GUI management as requested.
 		settings = {
 			# Basic defaults to ensure startup
 			general = {
 				language = "tr";
 			};
-			
+
 			# Lock Screen Configuration (Replacing Hyprlock)
 			lockScreen = {
 				enabled = true;
 				background = "screenshot"; # Or wallpaper
 				blur = true;
 			};
-			
-			# ==================================================================
+
 			# TEMPLATES - Declarative Integration
-			# ==================================================================
 			templates = {
 				enableUserTheming = true;
 				activeTemplates = [
@@ -48,9 +41,8 @@
 					"zen"
 				];
 			};
-			
+
 			# User Templates Configuration (Paths)
-			# Adapting from Noctalia's paths to Caelstia's (assuming similar structure)
 			user-templates = {
 				templates = {
 					kitty = {
@@ -79,11 +71,7 @@
 		};
 	};
 
-	# ========================================================================
 	# TEMPLATE FILES - Default templates
-	# ========================================================================
-	# We create these initial templates so Caelstia has something to work with.
-	# Using the same logic as Noctalia for compatibility.
 
 	xdg.configFile."caelstia/templates/kitty.conf".text = ''
 		# Caelstia Template - Kitty Theme
@@ -118,10 +106,9 @@
 		color7 {{onSurface}}
 		color15 {{onSurface}}
 	'';
-	
+
 	xdg.configFile."caelstia/templates/starship.toml".text = ''
 		# Caelstia Template - Starship Prompt
-		# (Simplified for Caelstia)
 		format = """
 		$directory\
 		$git_branch\

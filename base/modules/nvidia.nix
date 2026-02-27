@@ -1,11 +1,7 @@
 { config, pkgs, lib, ... }:
 
 {
-	# ========================================================================
 	# GPU CONFIGURATION - AMD Ryzen AI 7 + NVIDIA RTX 5060 Max-Q
-	# ========================================================================
-	# Optimized for Hybrid Graphics (Prime Offloading)
-	# iGPU (Radeon 860M) handles display, dGPU (RTX 5060) handles heavy loads.
 
 	hardware.graphics = {
 		enable = true;
@@ -17,17 +13,16 @@
 		"nvidia.NVreg_RestrictProfilingToAdminUsers=0"
 		"iomem=relaxed"
 	];
-  
+
 	services.xserver.videoDrivers = [ "nvidia" ];
-  
+
 	hardware.nvidia = {
 		modesetting.enable = true;
 
 		# RTX 5060 (Blackwell) - stable driver
 		package = config.boot.kernelPackages.nvidiaPackages.stable;
 
-		# Blackwell (RTX 50) and newer work better with GSP, 
-		# but open modules can sometimes fail to build on very new kernels.
+		# Blackwell (RTX 50) and newer work better with GSP,
 		open = false;
 		nvidiaSettings = true;
 		powerManagement.enable = true;

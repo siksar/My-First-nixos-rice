@@ -10,10 +10,6 @@
 			format = "                        $os$directory$git_branch$character";
 
 			# Palette (Miasma)
-			# Orange: #bb7744
-			# Brown/Copper: #b36d43
-			# Foreground: #c2c2b0
-			# Background: #222222
 
 			os = {
 				disabled = false;
@@ -41,7 +37,7 @@
 				style = "fg:#666666"; # Miasma Comment/Grey
 				format = "[$symbol$branch]($style) ";
 			};
-			
+
 			git_status = {
 				style = "fg:#666666";
 				format = "([$all_status$ahead_behind]($style) )";
@@ -55,7 +51,7 @@
 				vimcmd_replace_symbol = "[R](bold fg:#bb7744)";
 				vimcmd_replace_one_symbol = "[r](bold fg:#bb7744)";
 			};
-			
+
 			cmd_duration = {
 				min_time = 2000;
 				format = "[$duration](bold fg:yellow) ";

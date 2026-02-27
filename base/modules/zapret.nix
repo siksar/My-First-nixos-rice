@@ -1,18 +1,13 @@
 { config, pkgs, lib, ... }:
 
-# ============================================================================
 # ZAPRET - Minimal DPI Bypass (GoodbyeDPI alternative for Linux)
-# ============================================================================
-# Bu modül, DPI (Deep Packet Inspection) bypass için minimal yapılandırma sağlar.
-# YouTube, Discord, Twitter vb. sitelere erişim için kullanılır.
-# ============================================================================
 
 let
 	# Zapret binary'lerini nix-community/nur veya doğrudan derle
 	zapret = pkgs.stdenv.mkDerivation rec {
 		pname = "zapret";
 		version = "70";
-    
+
 		src = pkgs.fetchFromGitHub {
 			owner = "bol-van";
 			repo = "zapret";
@@ -21,17 +16,17 @@ let
 		};
 
 		nativeBuildInputs = with pkgs; [ pkg-config ];
-		buildInputs = with pkgs; [ 
-			libnetfilter_queue 
-			libnfnetlink 
-			libcap 
-			zlib 
+		buildInputs = with pkgs; [
+			libnetfilter_queue
+			libnfnetlink
+			libcap
+			zlib
 		];
 
 		buildPhase = ''
 			# Build nfqws
 			cd nfq && make && cd ..
-			# Build tpws  
+			# Build tpws
 			cd tpws && make && cd ..
 		'';
 
@@ -50,9 +45,7 @@ in
 	# Kernel modül
 	boot.kernelModules = [ "nfnetlink_queue" ];
 
-	# ========================================================================
 	# NFQWS Service - YouTube/Discord/Twitter bypass
-	# ========================================================================
 	systemd.services.zapret = {
 		description = "Zapret DPI Bypass";
 		wantedBy = [ "multi-user.target" ];
@@ -69,9 +62,6 @@ in
 			ExecStart = ''
 				${zapret}/bin/nfqws \
 					--qnum=200 \
-					--dpi-desync=fake,split2 \
-					--dpi-desync-ttl=4 \
-					--dpi-desync-fooling=badsum
 			'';
 			ExecStopPost = ''
 				${pkgs.iptables}/bin/iptables -t mangle -D POSTROUTING -p tcp --dport 443 -j NFQUEUE --queue-num 200 --queue-bypass 2>/dev/null || true

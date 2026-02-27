@@ -1,9 +1,7 @@
 
 { config, pkgs, lib, inputs, ... }:
 {
-	# ========================================================================
 	# IMPORTS - Modular Home Configuration
-	# ========================================================================
 	imports = [
 		./home/hyprland.nix
 		./home/caelstia-shell.nix
@@ -11,6 +9,7 @@
 
 		./home/starship.nix
 		./home/editors.nix
+		./home/nvim.nix
 		./home/tui-media.nix
 		./home/wrappers.nix
 		./home/yazi.nix
@@ -21,10 +20,7 @@
 
 		./home/fastfetch.nix    # System fetch tool
 	];
-	# ========================================================================
 	# STYLIX - Tema tek merkezden (dotfiles/stylix/stylix.nix)
-	# Hedefler Stylix varsayılanlarına bırakıldı; istisna gerekiyorsa burada override.
-	# ========================================================================
 	stylix = {
 		# Miasma theme overrides
 		base16Scheme = ./stylix/miasma.yaml;
@@ -32,22 +28,30 @@
 			url = "https://raw.githubusercontent.com/NixOS/nixos-artwork/master/wallpapers/nix-wallpaper-dracula.png";
 			sha256 = "sha256-SykeFJXCzkeaxw06np0QkJCK28e0k30PdY8ZDVcQnh4=";
 		};
+		targets = {
+			kitty.enable = true;
+			neovim.enable = true;
+			yazi.enable = true;
+			helix.enable = true;
+			bat.enable = true;
+			fzf.enable = true;
+			btop.enable = true;
+			lazygit.enable = true;
+		};
 	};
 
-	# ========================================================================
 	# HOME MANAGER BASE
-	# ========================================================================
 	home.stateVersion = "25.11";
 	home.username = "zixar";
 	home.homeDirectory = "/home/zixar";
-  
+
 	home.sessionVariables = {
 		SHELL = "${pkgs.nushell}/bin/nu";
 		EDITOR = "nvim";
 		VISUAL = "nvim";
 		TERMINAL = "kitty";
 		BROWSER = "zen";
-    
+
 		# Wayland
 		QT_QPA_PLATFORM = "wayland;xcb";
 		QT_QPA_PLATFORMTHEME = lib.mkForce "gtk2";
@@ -58,19 +62,18 @@
 		XDG_SESSION_TYPE = "wayland";
 		XDG_CURRENT_DESKTOP = "Hyprland";
 		XDG_SESSION_DESKTOP = "Hyprland";
-    
+
 		# Theming managed by Stylix
 
-    
 		# GPU
 		__GLX_VENDOR_LIBRARY_NAME = "nvidia";
 		__NV_PRIME_RENDER_OFFLOAD = "1";
 		__NV_PRIME_RENDER_OFFLOAD_PROVIDER = "NVIDIA-G0";
-    
+
 		# Performance
 		MESA_NO_ERROR = "1";
 		__GL_THREADED_OPTIMIZATIONS = "1";
-    
+
 		# Nix
 		NIX_BUILD_CORES = "4";
 		NIX_MAX_JOBS = "8";
@@ -82,7 +85,6 @@
 		"$HOME/go/bin"
 	];
 
-	# ========================================================================
 	# GIT
 	programs.git = {
 		enable = true;
@@ -106,7 +108,7 @@
 		};
 		lfs.enable = true;
 	};
-  
+
 	programs.delta = {
 		enable = true;
 		enableGitIntegration = true;
@@ -119,9 +121,7 @@
 
 	# NOTE: Using Kitty as terminal (configured in home/kitty.nix)
 
-	# ========================================================================
 	# SYSTEM MONITORING & TOOLS
-	# ========================================================================
 	programs.broot = {
 		enable = true;
 		enableZshIntegration = false;
@@ -167,11 +167,7 @@
 		};
 	};
 
-	# ========================================================================
 	# GTK/QT THEME - Managed by Stylix (modules/stylix.nix)
-	# ========================================================================
-	# Stylix handles: gtk.theme, gtk.iconTheme, gtk.cursorTheme, qt.*
-	# We only set dark mode preferences here.
 	gtk = {
 		enable = true;
 		gtk3.extraConfig = {
@@ -186,18 +182,15 @@
 
 	# NOTE: Cursor theme managed by Stylix (base/modules/stylix.nix)
 
-	# ========================================================================
 	# PACKAGES
-	# ========================================================================
 	home.packages = with pkgs; [
 		# Zen Browser (moved to home/zen.nix)
-		# inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
-		
+
 		# System Dependencies (Noctalia)
 		upower
 		networkmanagerapplet
 		bluez
-    
+
 		# Rust Tools
 		procs
 		dust
@@ -213,7 +206,7 @@
 		hyperfine
 		bandwhich
 		grex
-    
+
 		# Development
 		gcc
 		# clang # Removed to avoid conflict with gcc over /bin/cc
@@ -224,7 +217,7 @@
 		git-lfs
 		lazygit
 		gh
-    
+
 		# Containers
 		podman-compose
 		podman-tui
@@ -236,7 +229,7 @@
 		ctop
 		buildah
 		skopeo
-    
+
 		# System
 		nwg-look
 		wl-clipboard
@@ -249,21 +242,20 @@
 		swappy
 		grimblast
 		hyprpicker
-    
+
 		# Wallpaper
 		hyprpaper
 		# swww # Removed in favor of hyprpaper
-		# waypaper # Removed in favor of hyprpaper
-    
+
 		# Media
 		mpv
 		imv
 		mpvpaper
-    
+
 		# Social
 		discord
 		telegram-desktop
-    
+
 		# Utilities
 		unzip
 		p7zip
@@ -273,21 +265,21 @@
 		fzf
 		tldr
 		cheat
-    
+
 		# Input
 		wtype
 		wev
-    
+
 		# Monitoring
 		btop
 		iotop
 		powertop
-    
+
 		# Gaming (user-level)
 		mangohud
 		goverlay
 		vkbasalt
-    
+
 		# AI/ML
 		ollama
 		inputs.antigravity-nix.packages.${pkgs.system}.google-antigravity-no-fhs
@@ -295,9 +287,7 @@
 		# x86_64 specific packages
 	];
 
-	# ========================================================================
 	# XDG
-	# ========================================================================
 	xdg = {
 		enable = true;
 		userDirs = {
@@ -316,10 +306,6 @@
 			enable = true;
 			defaultApplications = {
 				# "text/html" = "app.zen_browser.zen.desktop"; # Moved to home/zen.nix
-				# "x-scheme-handler/http" = "app.zen_browser.zen.desktop";
-				# "x-scheme-handler/https" = "app.zen_browser.zen.desktop";
-				# "x-scheme-handler/about" = "app.zen_browser.zen.desktop";
-				# "x-scheme-handler/unknown" = "app.zen_browser.zen.desktop";
 				"image/png" = "imv.desktop";
 				"image/jpeg" = "imv.desktop";
 				"image/gif" = "imv.desktop";
@@ -336,17 +322,13 @@
 		};
 	};
 
-	# ========================================================================
 	# FILES & CONFIG
-	# ========================================================================
 	home.file = {
 		# Wallpaper cycle script
 		".local/bin/wallpaper-cycle" = {
 			source = ./scripts/wallpaper-cycle.sh;
 			executable = true;
 		};
-
-
 
 		# fastfetch config is in home/fastfetch.nix
 
@@ -361,9 +343,7 @@
 		'';
 	};
 
-	# ========================================================================
 	# DIRENV
-	# ========================================================================
 	programs.direnv = {
 		enable = true;
 		enableZshIntegration = false;
@@ -372,27 +352,10 @@
 		silent = false;
 	};
 
-	# ========================================================================
 	# FZF
-	# ========================================================================
 	programs.fzf = {
 		enable = true;
 		enableZshIntegration = false;
-		# Stylix fzf target ile çakışmasın diye mkForce (gruvbox renkleri korunuyor)
-		colors = lib.mkForce {
-			"bg+" = "#3c3836";
-			"bg" = "#282828";
-			"spinner" = "#fb4934";
-			"hl" = "#83a598";
-			"fg" = "#ebdbb2";
-			"header" = "#8ec07c";
-			"info" = "#fabd2f";
-			"pointer" = "#fb4934";
-			"marker" = "#fb4934";
-			"fg+" = "#ebdbb2";
-			"prompt" = "#fb4934";
-			"hl+" = "#83a598";
-		};
 		defaultOptions = [
 			"--height 40%"
 			"--layout=reverse"
@@ -401,9 +364,7 @@
 		];
 	};
 
-	# ========================================================================
 	# EZA
-	# ========================================================================
 	programs.eza = {
 		enable = true;
 		enableZshIntegration = false;
@@ -416,14 +377,10 @@
 		];
 	};
 
-	# ========================================================================
 	# BAT
-	# ========================================================================
 	programs.bat = {
 		enable = true;
-		# Stylix bat target ile çakışmasın diye mkForce
-		config = lib.mkForce {
-			theme = "gruvbox-dark";
+		config = {
 			pager = "less -FR";
 			style = "numbers,changes,header";
 		};
@@ -440,9 +397,7 @@
 	# LESS - using defaults
 	programs.less.enable = true;
 
-	# ========================================================================
 	# MAN PAGES
-	# ========================================================================
 	programs.man = {
 		enable = true;
 		generateCaches = true;
@@ -466,9 +421,7 @@
 		};
 	};
 
-	# ========================================================================
 	# GPG
-	# ========================================================================
 	programs.gpg = {
 		enable = true;
 		homedir = "${config.home.homeDirectory}/.gnupg";
@@ -479,9 +432,7 @@
 		};
 	};
 
-	# ========================================================================
 	# SERVICES
-	# ========================================================================
 	services.ssh-agent.enable = true;
 	services.gpg-agent = {
 		enable = true;
@@ -492,39 +443,35 @@
 		pinentry.package = pkgs.pinentry-curses;
 	};
 
-	# ========================================================================
 	# SHELL ALIASES
-	# ========================================================================
 	home.shellAliases = {
 		# Nix (flake dizini: ~/dotfiles/flake)
-		rebuild = "sudo nixos-rebuild switch --flake ~/dotfiles/flake#nixos";
+		rebuild = "nixos-safe-switch";
 		rebuild-test = "sudo nixos-rebuild test --flake ~/dotfiles/flake#nixos";
 		zixswitch = "home-manager switch --flake ~/dotfiles/flake#zixar -b backup";
 		# NOTE: fullrebuild moved to nushell.nix as a custom command (def)
-		# because nushell treats ';' in aliases as a command separator,
-		# causing the second command to run on every shell startup!
 		nix-gc = "nix-collect-garbage --delete-older-than 7d";
-    
+
 		# Editors
 		v = "nvim";
 		vim = "nvim";
-    
+
 		# CPU
 		perf-run = "with-cores perf";
 		eff-run = "with-cores eff";
-    
+
 		# Navigation
 		".." = "cd ..";
 		"..." = "cd ../..";
 		"...." = "cd ../../..";
-    
+
 		# Listing
 		ls = "eza";
 		ll = "eza -l";
 		la = "eza -la";
 		lt = "eza --tree";
 		lla = "eza -la";
-    
+
 		# File operations
 		cat = "bat";
 		du = "dust";
@@ -532,7 +479,7 @@
 		find = "fd";
 		grep = "rg";
 		sed = "sd";
-    
+
 		# Git
 		g = "git";
 		ga = "git add";
@@ -544,63 +491,61 @@
 		gd = "git diff";
 		gco = "git checkout";
 		gb = "git branch";
-    
+
 		# Config shortcuts (flake: ~/dotfiles/flake)
 		dotfiles = "cd ~/dotfiles/flake";
 		hypr = "nvim ~/.config/hypr/hyprland.conf";
-    
+
 		# System
 		top = "btop";
 		htop = "btop";
-    
+
 		# Misc
 		c = "clear";
 		q = "exit";
 	};
 
-	# ========================================================================
 	# DOCUMENTATION
-	# ========================================================================
 	home.file."README.md".text = ''
 		# Home Manager Configuration
-    
+
 		## Structure
 		- `home/` - Modular configurations
 		- `scripts/` - Custom scripts
-    
+
 		## Key Bindings
-    
+
 		### Terminal
 		- `Ctrl+T` - FZF file search
 		- `Ctrl+R` - FZF history search
 		- `Alt+C` - FZF cd
-    
+
 		### Applications
 		- `Super+Return` - Terminal
 		- `Super+Q` - Close window
 		- `Super+M` - Exit Hyprland
 		- `Super+E` - File manager
 		- `Super+B` - Browser
-    
+
 		## Tools
-    
+
 		### File Management
 		- `yazi` - TUI file manager
 		- `eza` - Better ls
 		- `bat` - Better cat
 		- `fd` - Better find
 		- `ripgrep` - Better grep
-    
+
 		### System Monitoring
 		- `btop` - System monitor
 		- `bottom` - Process viewer
 		- `fastfetch` - System info
-    
+
 		### Development
 		- `gitui` - TUI git
 		- `lazygit` - Alternative git TUI
 		- `delta` - Better git diff
-    
+
 		## Customization
 		Edit files in `~/.config/home-manager/` and run:
 		```bash

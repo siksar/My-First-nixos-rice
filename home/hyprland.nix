@@ -1,8 +1,6 @@
 { config, pkgs, lib, ... }:
 let
-	# ========================================================================
 	# WLR-WHICH-KEY MENU BUILDER (Theme-only fix)
-	# ========================================================================
 	mkMenu = name: menu: let
 		configFile = pkgs.writeText "wlr-which-key-${name}.yaml" (lib.generators.toYAML {} {
 			font = "JetBrainsMono Nerd Font 13";
@@ -20,9 +18,7 @@ let
 		exec ${lib.getExe pkgs.wlr-which-key} ${configFile}
 	'';
 
-	# ========================================================================
 	# NEW MENU DEFINITIONS (Sıfırdan Tasarım)
-	# ========================================================================
 
 	# ✍️ Writer / Editor Menu (Mod+W)
 	writerMenu = mkMenu "writer" [
@@ -57,6 +53,10 @@ in
 		systemd.enable = true;
 
 		settings = {
+			env = [
+				"AQ_DRM_DEVICES,/dev/dri/card1:/dev/dri/card0"
+				"__EGL_VENDOR_LIBRARY_FILENAMES,/run/opengl-driver/share/glvnd/egl_vendor.d/50_mesa.json"
+			];
 			monitor = [ "eDP-1, preferred, 0x0, 1" ];
 
 			input = {
@@ -125,11 +125,10 @@ in
 				"$mod, A, exec, ${lib.getExe mediaMenu}"
 
 				# Caelstia Shell Toggles
-				"$mod, Z, exec, caelestia-shell ipc call launcher toggle"
-				"$mod, X, exec, caelestia-shell ipc call controlCenter toggle"
-				"$mod SHIFT, W, exec, caelestia-shell ipc call wallpaper random"
-				"$mod, C, exec, caelestia-shell ipc call bluetooth togglePanel"
-				"$mod, V, exec, caelestia-shell ipc call sessionMenu show"
+				"$mod, Z, exec, caelestia-shell ipc call drawers toggle launcher"
+				"$mod, X, exec, caelestia-shell ipc call drawers toggle dashboard"
+				"$mod, C, exec, caelestia-shell ipc call drawers toggle utilities"
+				"$mod, V, exec, caelestia-shell ipc call drawers toggle session"
 
 				# OTHER KEYBINDINGS
 				"ALT, Shift_L, exec, hyprctl switchxkblayout all next"
@@ -155,13 +154,13 @@ in
 				"$mod SHIFT, 9, movetoworkspace, 9"
 
 				# Lock Screen & Notifications
-				"$mod SHIFT, L, exec, caelestia-shell ipc call lockScreen lock"
-				"$mod, N, exec, caelestia-shell ipc call notifications showHistory"
-				"$mod SHIFT, N, exec, caelestia-shell ipc call notifications closeAll"
+				"$mod SHIFT, L, exec, caelestia-shell ipc call lock lock"
+				"$mod, N, exec, caelestia-shell ipc call drawers toggle sidebar"
+				"$mod SHIFT, N, exec, caelestia-shell ipc call notifs clear"
 			];
 
 			bindr = [
-				"SUPER, SUPER_L, exec, caelestia-shell ipc call launcher toggle"
+				"SUPER, SUPER_L, exec, caelestia-shell ipc call drawers toggle launcher"
 			];
 
 			# Multimedia

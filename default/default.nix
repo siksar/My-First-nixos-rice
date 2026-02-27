@@ -1,6 +1,4 @@
 # default.nix - Backward compatibility for non-flake commands
-# Flake kullanıcıları: nixos-rebuild switch --flake ../flake#nixos
-# Bu dosya: nix-build default, nix-env, nix-shell için (flake referansı olmadan).
 
 let
 	lock = builtins.fromJSON (builtins.readFile ../flake/flake.lock);

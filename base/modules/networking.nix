@@ -1,18 +1,16 @@
 { config, pkgs, ... }:
 {
-	# ========================================================================
 	# NETWORKING CONFIGURATION
-	# ========================================================================
-  
+
 	networking = {
 		hostName = "nixos";
-    
+
 		networkmanager = {
 			enable = true;
 			wifi.powersave = false;
+			wifi.macAddress = "preserve";      # Random MAC adresi internet kopmalarına yol açabilir
 		};
-    
-    
+
 		# DNS Servers (Cloudflare)
 		nameservers = [ "1.1.1.1" "1.0.0.1" ];
 

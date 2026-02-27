@@ -2,7 +2,7 @@
 {
 	programs.nushell = {
 		enable = true;
-    
+
 		# Environment variables
 		environmentVariables = {
 			EDITOR = "nvim";
@@ -10,15 +10,14 @@
 		};
 
 		# Shell Aliases - only nushell-specific ones
-		# Most aliases are defined globally in home.shellAliases
 		shellAliases = {
 			# Nushell-specific compatibility aliases
 			conf = "z /etc/nixos"; # Using zoxide
-      
+
 			# System info aliases
 			neofetch = "fastfetch";
 		};
-    
+
 		# Extra Config
 		extraConfig = ''
 			$env.config = {
@@ -41,19 +40,19 @@
 					}
 				}
 			}
-      
+
 			# Custom Commands — flake: ~/dotfiles/flake
 			def sys-rebuild [] {
 				cd ($env.HOME + "/dotfiles/flake")
 				git add .
 				git commit -m 'auto'
-				sudo nixos-rebuild switch --flake ($env.HOME + "/dotfiles/flake#nixos")
+				nixos-safe-switch
 			}
-      
+
 			def fullrebuild [] {
 				let flake = $env.HOME + "/dotfiles/flake"
 				print "Rebuilding NixOS System..."
-				sudo nixos-rebuild switch --flake ($flake + "#nixos")
+				nixos-safe-switch
 				print "Rebuilding Home Manager..."
 				home-manager switch --flake ($flake + "#zixar") -b backup
 			}
@@ -70,12 +69,12 @@
 				sys-rebuild
 				home-manager switch --flake ($env.HOME + "/dotfiles/flake") + "#zixar"
 			}
-      
+
 			def sys-clean [] {
 				sudo nix-collect-garbage -d
 				sudo nix-store --optimize
 			}
-      
+
 			# Hızlı UI ve Home Manager derleme / reload komutu
 			def zixreload [] {
 				let dotfiles = $env.HOME + "/dotfiles"
@@ -87,14 +86,14 @@
 				try { systemctl --user restart noctalia-shell } catch { print "Failed to restart noctalia via systemd..." }
 				print "✅ Tüm ekran ve konfigürasyonlar başarıyla yenilendi!"
 			}
-      
+
 			# Zoxide/Starship/Carapace hooks are auto-added
-      
+
 			# Run Fastfetch (System Fetch) on startup
 			fastfetch
 		'';
 	};
-  
+
 	# Carapace - Multi-shell completion tailored for Nushell
 	programs.carapace = {
 		enable = true;

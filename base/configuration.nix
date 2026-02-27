@@ -1,14 +1,11 @@
 { config, pkgs, lib, inputs, ... }:
 
 {
-	# ========================================================================
 	# IMPORTS - Modular Configuration Structure
-	# ========================================================================
-	imports = [ 
+	imports = [
 		./hardware-configuration.nix
-    
+
 		# NOTE: AMD hardware modules are imported in flake/flake.nix
-		# System modules - Optimized for Gigabyte Aero X16
 		./modules/kernel.nix
 		./modules/cpu-scheduling.nix      # Zen 5/5c core management
 		./modules/npu.nix                 # AMD XDNA NPU support
@@ -28,53 +25,55 @@
 		../wrapped-programs/prism.nix
 	];
 
-
-	# ========================================================================
 	# BOOT CONFIGURATION
-	# ========================================================================
 	boot = {
 		loader = {
 			systemd-boot = {
 				enable = true;
 				configurationLimit = 5;
-				consoleMode = "max";
+				consoleMode = "keep"; # Ekran çözünürlüğü değişimini iptal edip UEFI pürüzsüzlüğünü korur (Pre-init için 1 saniye hızlandırır)
 				editor = false;
 			};
 			timeout = 0;
 			efi.canTouchEfiVariables = true;
 			efi.efiSysMountPoint = "/boot";
 		};
-    
+
 		# Use systemd in initrd for better error handling
 		initrd.systemd.enable = true;
-    
+
 		# Plymouth for smooth boot
 		plymouth = {
 			enable = true;
 			theme = lib.mkDefault "breeze"; # Stylix overrides this
 		};
 	};
-  
+
 	# Global systemd timeout
 	systemd.settings.Manager = {
-		RebootWatchdogSec = "10s";
-		DefaultTimeoutStopSec = "10s";
-		DefaultTimeoutStartSec = "30s";
+		RebootWatchdogSec = "5s";
+		DefaultTimeoutStopSec = "5s";
+		DefaultTimeoutStartSec = "15s";
 	};
 
-	# ========================================================================
-	# BOOT OPTIMIZATION
-	# ========================================================================
+	systemd.enableStrictShellChecks = true;
+
+	# BOOT OPTIMIZATION & SYSTEMD TWEAKS
 	systemd.services.NetworkManager-wait-online.enable = false;
-  
+
+	# Eski Udev kuyruğunu bekleyen servisi kapat
+	systemd.services.systemd-udev-settle.enable = false;
+
+	systemd.services.lvm2-monitor.enable = false;
+
+	systemd.services.ModemManager.enable = false;
+
 	# NVIDIA Coolbits
 	services.xserver.deviceSection = ''
 		Option "Coolbits" "28"
 	'';
 
-	# ========================================================================
 	# LOCALIZATION
-	# ========================================================================
 	time.timeZone = "Europe/Istanbul";
 	i18n = {
 		defaultLocale = "en_US.UTF-8";
@@ -90,7 +89,7 @@
 			LC_TIME = "tr_TR.UTF-8";
 		};
 	};
-  
+
 	# Keyboard
 	services.xserver.xkb = {
 		layout = "us";
@@ -98,17 +97,15 @@
 	};
 	console.keyMap = "us";
 
-	# ========================================================================
 	# VIRTUALIZATION
-	# ========================================================================
 	virtualisation.libvirtd = {
 		enable = true;
 	};
-  
+
 	programs.virt-manager.enable = true;
-  
+
 	security.unprivilegedUsernsClone = true;
-  
+
 	virtualisation.podman = {
 		enable = true;
 		dockerCompat = true;
@@ -118,7 +115,7 @@
 			dates = "weekly";
 		};
 	};
-  
+
 	virtualisation.containers = {
 		enable = true;
 		storage.settings = {
@@ -130,17 +127,17 @@
 		};
 	};
 
-	# ========================================================================
 	# USER MANAGEMENT
-	# ========================================================================
+	users.mutableUsers = true;
+
 	users.users.zixar = {
 		isNormalUser = true;
 		description = "zixar";
 		shell = pkgs.zsh;
-		extraGroups = [ 
-			"networkmanager" 
-			"wheel" 
-			"video" 
+		extraGroups = [
+			"networkmanager"
+			"wheel"
+			"video"
 			"audio"
 			"podman"
 			"docker"
@@ -152,19 +149,17 @@
 		];
 		openssh.authorizedKeys.keys = [];
 	};
- 
+
 	# /etc/nixos dizinine sudo'suz yazma yetkisi
 	systemd.tmpfiles.rules = [
 		"d /etc/nixos 0755 zixar users -"
 		"d /var/cache/ccache 0755 root nixbld -"
 		"d /tmp/nix-build 0755 root root -"
 	];
- 
+
 	programs.zsh.enable = true;
 
-	# ========================================================================
 	# FONTS
-	# ========================================================================
 	fonts = {
 		packages = with pkgs; [
 			jetbrains-mono
@@ -196,18 +191,23 @@
 		enableDefaultPackages = true;
 	};
 
-	# ========================================================================
+	# GLOBAL COMPILER FLAGS (Zen 5 / Strix Point Optimization)
+	environment.variables = {
+		CFLAGS = "-O3 -march=znver5 -mtune=znver5 -pipe -flto";
+		CXXFLAGS = "-O3 -march=znver5 -mtune=znver5 -pipe -flto";
+		MAKEFLAGS = lib.mkForce "-j$(nproc)"; # Derleme sırasında tüm işlemci çekirdeklerini zorlar
+	};
+
 	# NIX CONFIGURATION - Optimized
-	# ========================================================================
 	nix = {
 		settings = {
-			# Parallel builds (8 cores for Strix Point)
-			max-jobs = 8;
-			cores = 4;
-      
+			# Parallel builds (Maximized for Strix Point Asymmetric Cores)
+			max-jobs = "auto";
+			cores = 0;
+
 			# Parallel downloads
 			download-buffer-size = 512 * 1024 * 1024;
-      
+
 			# Binary caches
 			substituters = [
 				"https://cache.nixos.org"
@@ -225,39 +225,37 @@
 				"chaotic-nyx.cachix.org-1:HfnXSw4pj95iI/n17rNqbDBO8NpdgaQcpGuPvGjTMJU="
 				"cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
 			];
-      
+
 			# Performance
 			auto-optimise-store = true;
 			keep-outputs = true;
 			keep-derivations = true;
 			builders-use-substitutes = true;
-      
+
 			# Features
 			experimental-features = [ "nix-command" "flakes" "ca-derivations" ];
 			trusted-users = [ "root" "@wheel" "zixar" ];
 		};
-    
+
 		gc = {
 			automatic = false; # Handled by programs.nh.clean
 			dates = "weekly";
 			options = "--delete-older-than 14d";
 			persistent = true;
 		};
-    
+
 		optimise = {
 			automatic = true;
 			dates = [ "weekly" ];
 		};
-    
+
 		extraOptions = ''
-			http-connections = 50
+			http-connections = 128
 			log-lines = 25
 		'';
 	};
 
-	# ========================================================================
 	# SECURITY
-	# ========================================================================
 	security = {
 		sudo.wheelNeedsPassword = true;
 		sudo.extraConfig = ''
@@ -268,12 +266,10 @@
 		polkit.enable = true;
 		rtkit.enable = true;
 	};
-  
+
 	programs.dconf.enable = true;
 
-	# ========================================================================
 	# NH - NixOS Helper
-	# ========================================================================
 	programs.nh = {
 		enable = true;
 		clean.enable = true;
@@ -281,17 +277,13 @@
 		flake = "/home/zixar/dotfiles/flake";
 	};
 
-	# ========================================================================
 	# SYSTEM STATE
-	# ========================================================================
 	system.stateVersion = "25.11";
 
-	# ========================================================================
 	# DOCUMENTATION
-	# ========================================================================
 	environment.etc."nixos-info/README.md".text = ''
 		# Gigabyte Aero X16 NixOS Configuration
-    
+
 		## Hardware
 		- **CPU**: AMD Ryzen AI 9 HX 370 (Strix Point)
 		- **Cores**: 4x Zen 5 (Perf) + 4x Zen 5c (Eff) = 8C/16T
@@ -299,9 +291,9 @@
 		- **GPU**: NVIDIA RTX 4070 Laptop + AMD Radeon 860M
 		- **RAM**: 32GB DDR5
 		- **SSD**: Kingston OM8PGP4
-    
+
 		## Quick Commands
-    
+
 		### System
 		```bash
 		rebuild           # Rebuild system
@@ -309,7 +301,7 @@
 		nix-gc           # Garbage collect
 		nix-store-optimize # Optimize store
 		```
-    
+
 		### CPU Scheduling
 		```bash
 		with-cores perf <cmd>   # Run on Zen 5 cores
@@ -317,31 +309,31 @@
 		cpu-info               # CPU frequency info
 		s-tui                  # CPU monitor
 		```
-    
+
 		### NPU
 		```bash
 		npu-mon            # NPU status
 		npu-bench          # NPU benchmark
 		```
-    
+
 		### Gaming
 		```bash
 		gaming-perf on     # Enable gaming mode
 		gaming-perf off    # Disable gaming mode
 		gamemoderun <game> # Run game with optimizations
 		```
-    
+
 		## Documentation
 		- CPU: `/etc/cpu-scheduling/README.md`
 		- NPU: `/etc/npu/README.md`
 		- Nix: `/etc/nix-optimizations/README.md`
 		- Gaming: `/etc/gaming/README.md`
-    
+
 		## Specializations
 		- `zen-kernel`: Zen kernel for gaming
 		- `xanmod-kernel`: Xanmod low-latency kernel
 		- `lts-kernel`: Stable LTS kernel
-    
+
 		Select at boot: Advanced options for NixOS
 	'';
 }

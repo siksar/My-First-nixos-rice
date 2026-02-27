@@ -2,7 +2,6 @@
 
 let
 	# Determine optimal build cores based on CPU topology
-	# Strix Point: 4 Zen5 (perf) + 4 Zen5c (eff) = 8 cores, 16 threads
 	totalCores = 16;
 	performanceCores = 8;  # Zen 5 cores with SMT
 
@@ -28,8 +27,6 @@ let
 		# Run nix build with performance optimizations
 		exec ${pkgs.nix-output-monitor}/bin/nom build "$@" \
 			--option cores ${toString buildCores} \
-			--option max-jobs ${toString maxJobs} \
-			--option parallel-downloads 8
 	'';
 
 	# Nix develop wrapper
@@ -39,7 +36,6 @@ let
 		# Optimized nix develop
 		exec nix develop "$@" \
 			--option cores ${toString buildCores} \
-			--option max-jobs ${toString maxJobs}
 	'';
 
 	# Store optimization script
@@ -82,9 +78,7 @@ let
 
 in
 {
-	# =============================================================================
 	# NIX DAEMON OPTIMIZATION
-	# =============================================================================
 
 	nix = {
 		settings = {
@@ -133,36 +127,22 @@ in
 		'';
 	};
 
-	# =============================================================================
 	# NIX DAEMON SERVICE OPTIMIZATION
-	# =============================================================================
 
- # systemd.services.nix-daemon = {
-	 # serviceConfig = {
-			# CPU affinity - use efficiency cores for daemon
-		 # CPUAffinity = "4-7,12-15";
+# systemd.services.nix-daemon = {
 
 			# Nice level
-		 # Nice = 10;
 
 			# IO scheduling
-		 # IOSchedulingClass = "idle";
-		#  IOSchedulingPriority = 7;
-	 # };
-	#};
 
-	# =============================================================================
 	# BUILD ENVIRONMENT
-	# =============================================================================
 
 	# Create build directory on tmpfs for speed
 	systemd.tmpfiles.rules = [
 		"d /tmp/nix-build 0755 root root -"
 	];
 
-	# =============================================================================
 	# PACKAGES
-	# =============================================================================
 
 	environment.systemPackages = with pkgs; [
 		# Nix tools
@@ -189,18 +169,14 @@ in
 		nix-direnv            # Better direnv for nix
 	];
 
-	# =============================================================================
 	# CCACHE CONFIGURATION
-	# =============================================================================
 
 	programs.ccache = {
 		enable = true;
 		cacheDir = "/var/cache/ccache";
 	};
 
-	# =============================================================================
 	# DIRENV INTEGRATION
-	# =============================================================================
 
 	programs.direnv = {
 		enable = true;
@@ -208,9 +184,7 @@ in
 		silent = false;
 	};
 
-	# =============================================================================
 	# SHELL ALIASES
-	# =============================================================================
 
 	programs.zsh.interactiveShellInit = ''
 		# Nix completion
@@ -249,9 +223,7 @@ in
 		alias nix-gc='nix-collect-garbage --delete-older-than 7d'
 	'';
 
-	# =============================================================================
 	# ENVIRONMENT VARIABLES
-	# =============================================================================
 
 	environment.sessionVariables = {
 		# Nix settings
@@ -270,9 +242,7 @@ in
 		"MAKEFLAGS" = "-j${toString maxJobs}";
 	};
 
-	# =============================================================================
 	# DOCUMENTATION
-	# =============================================================================
 
 	environment.etc."nix-optimizations/README.md".text = ''
 		# Nix Build Optimizations

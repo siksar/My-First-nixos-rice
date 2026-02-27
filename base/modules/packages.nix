@@ -1,14 +1,10 @@
- { config, pkgs, inputs, ... }:
+{ config, pkgs, inputs, ... }:
 {
-	# ========================================================================
 	# SYSTEM PACKAGES
-	# ========================================================================
 
 	nixpkgs.config.allowUnfree = true;
 	environment.systemPackages = with pkgs; [
-		# ====================================================================
 		# CORE UTILITIES - RUST BASED
-		# ====================================================================
 		helix        # Modern modal editor (Rust)
 		bottom       # System monitor (Rust)
 		bat          # Cat clone with syntax highlighting (Rust)
@@ -18,10 +14,8 @@
 		zoxide       # Cd clone (Rust)
 		starship     # Shell prompt (Rust)
 		yazi         # File manager (Rust)
-		
-		# ====================================================================
+
 		# RUST DEVELOPMENT ENVIRONMENT
-		# ====================================================================
 		rustc
 		cargo
 		rust-analyzer
@@ -34,10 +28,8 @@
 		gnumake
 		cmake
 		clang
-
-		# ====================================================================
+		nchat
 		# SYSTEM & HARDWARE
-		# ====================================================================
 		wget
 		git
 		fastfetch
@@ -47,10 +39,8 @@
 		nvme-cli
 		smartmontools
 		appimage-run
-		
-		# ====================================================================
+
 		# APPLICATIONS & AI
-		# ====================================================================
 		vscode
 		claude-code
 		codex
@@ -67,23 +57,17 @@
 		ytmdesktop
 		mpv
 		yt-dlp
-		
-		# ====================================================================
+
 		# GAMING TOOLS
-		# ====================================================================
 		prismlauncher
 		heroic
 		protonup-qt
 		mangohud
 		gamescope
-		
-		# ====================================================================
+
 		# CONTAINERS & THEMES
-		# ====================================================================
 		docker
 		docker-compose
-		gruvbox-gtk-theme
-		gruvbox-dark-icons-gtk
 	];
 	# AppImage binfmt registration
 	boot.binfmt.registrations.appimage = {

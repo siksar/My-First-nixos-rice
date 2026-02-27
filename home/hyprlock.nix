@@ -1,17 +1,14 @@
 { config, pkgs, ... }:
 {
-	# ========================================================================
 	# HYPRLOCK - Screen Lock with Gruvbox Theme
-	# ========================================================================
-  
+
 	programs.hyprlock = {
 		enable = true;
-    
+
 		settings = {
 			# Source Noctalia generated theme (if exists)
-			# Fallback colors will be used if file doesn't exist
 			source = [ "~/.config/hypr/hyprlock-theme.conf" ];
-      
+
 			general = {
 				disable_loading_bar = false;
 				hide_cursor = true;
@@ -19,7 +16,7 @@
 				no_fade_in = false;
 				no_fade_out = false;
 			};
-      
+
 			# Background
 			background = [
 				{
@@ -34,7 +31,7 @@
 					color = "rgba(40, 40, 40, 1.0)";
 				}
 			];
-      
+
 			# Password input
 			input-field = [
 				{
@@ -65,7 +62,7 @@
 					valign = "center";
 				}
 			];
-      
+
 			# Labels
 			label = [
 				# Time
@@ -81,7 +78,7 @@
 					shadow_size = 3;
 					shadow_color = "rgba(0, 0, 0, 0.5)";
 				}
-        
+
 				# Date
 				{
 					text = ''cmd[update:60000] date +"%A, %d %B %Y"'';
@@ -92,7 +89,7 @@
 					halign = "center";
 					valign = "center";
 				}
-        
+
 				# User greeting
 				{
 					text = "  Welcome, $USER";
@@ -103,7 +100,7 @@
 					halign = "center";
 					valign = "center";
 				}
-        
+
 				# Uptime
 				{
 					text = ''cmd[update:60000] echo "󰅐 $(uptime -p | sed 's/up //')"'';
@@ -114,7 +111,7 @@
 					halign = "left";
 					valign = "bottom";
 				}
-        
+
 				# Battery (if laptop)
 				{
 					text = ''cmd[update:5000] cat /sys/class/power_supply/BAT0/capacity 2>/dev/null | xargs -I {} echo "󰁹 {}%" || echo ""'';
@@ -128,21 +125,19 @@
 			];
 		};
 	};
-  
-	# ========================================================================
+
 	# HYPRIDLE - Idle Management
-	# ========================================================================
-  
+
 	services.hypridle = {
 		enable = true;
-    
+
 		settings = {
 			general = {
 				lock_cmd = "pidof hyprlock || hyprlock";
 				before_sleep_cmd = "loginctl lock-session";
 				after_sleep_cmd = "hyprctl dispatch dpms on";
 			};
-      
+
 			listener = [
 				# Dim screen after 4 minutes
 				{
@@ -150,20 +145,20 @@
 					on-timeout = "brightnessctl -s set 30%";
 					on-resume = "brightnessctl -r";
 				}
-        
+
 				# Lock after 5 minutes
 				{
 					timeout = 300;
 					on-timeout = "hyprlock";
 				}
-        
+
 				# Turn off screen after 10 minutes
 				{
 					timeout = 600;
 					on-timeout = "hyprctl dispatch dpms off";
 					on-resume = "hyprctl dispatch dpms on";
 				}
-        
+
 				# Suspend after 30 minutes
 				{
 					timeout = 1800;

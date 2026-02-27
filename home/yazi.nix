@@ -28,7 +28,8 @@
 			};
 		};
 
-		# Stylix manages the yazi theme.
-		# Removed manual theme block to avoid clashes.
 	};
+
+	# Explicit target for Stylix just in case
+	stylix.targets.yazi.enable = true;
 }

@@ -87,8 +87,8 @@
 		homeConfigurations.zixar = home-manager.lib.homeManagerConfiguration {
 			inherit pkgs;
 			extraSpecialArgs = specialArgs;
-			modules = [ 
-				../home.nix 
+			modules = [
+				../home.nix
 				stylix.homeManagerModules.stylix
 			];
 		};

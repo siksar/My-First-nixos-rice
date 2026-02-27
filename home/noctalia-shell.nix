@@ -2,14 +2,12 @@
 {
 	imports = [ ../base/modules/noctalia-home.nix ];
 
-	# ========================================================================
 	# NOCTALIA SHELL - Disabled in favor of Caelstia
-	# ========================================================================
 	programs.noctalia-shell = {
 		enable = false;
 		systemd.enable = false;
 		package = inputs.noctalia-shell.packages.${pkgs.system}.default;
-		
+
 		settings = {
 			appearance = {
 				rounding.scale = 1.0;
@@ -40,17 +38,17 @@
 				flat = true;
 				padding = 2;
 				showOnHover = false;
-				
+
 				widgets = {
 					left = [
-						{ 
-							id = "ControlCenter"; 
-							useDistroLogo = true; 
-							enableColorization = true; 
-							colorizeSystemIcon = "primary"; 
+						{
+							id = "ControlCenter";
+							useDistroLogo = true;
+							enableColorization = true;
+							colorizeSystemIcon = "primary";
 						}
-						{ 
-							id = "Workspace"; 
+						{
+							id = "Workspace";
 							labelMode = "none";
 							emptyColor = "primary";
 							occupiedColor = "primary";
@@ -60,17 +58,17 @@
 					center = [
 						{ id = "MediaMini"; textColor = "primary"; }
 						{ id = "Clock"; clockColor = "primary"; }
-						{ 
-							id = "NotificationHistory"; 
-							iconColor = "primary"; 
-							unreadBadgeColor = "primary"; 
+						{
+							id = "NotificationHistory";
+							iconColor = "primary";
+							unreadBadgeColor = "primary";
 						}
 					];
 					right = [
-						{ 
-							id = "SystemMonitor"; 
-							iconColor = "primary"; 
-							textColor = "primary"; 
+						{
+							id = "SystemMonitor";
+							iconColor = "primary";
+							textColor = "primary";
 						}
 						{ id = "Battery"; }
 					];
@@ -88,7 +86,7 @@
 			general = {
 				logo = "nixos";
 			};
-			
+
 			launcher = {
 				actionPrefix = ":";
 			};
